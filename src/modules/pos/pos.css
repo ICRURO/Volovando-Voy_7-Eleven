@@ -1,0 +1,190 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f6f3ed;
+  width: 100%;
+  min-height: 100vh;
+}
+
+.pos-container {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  width: 100%;
+  height: 100vh;
+}
+
+/* Catálogo */
+.catalog {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  overflow-y: auto;
+}
+
+.catalog h2 {
+  text-align: center;
+  font-size: 1.2rem;
+  letter-spacing: 0.5px;
+  color: #111;
+}
+
+.search-bar input {
+  width: 100%;
+  padding: 0.65rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+
+.category-filters {
+  display: flex;
+  gap: 1rem;
+}
+
+.filter-btn {
+  flex: 1;
+  padding: 0.6rem;
+  border: 1px solid #8b1818;
+  background: transparent;
+  color: #8b1818;
+  font-weight: bold;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.filter-btn.active {
+  background: #8b1818;
+  color: #ffffff;
+}
+
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+.product-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.product-card img {
+  width: 90px;
+  height: 90px;
+  object-fit: contain;
+}
+
+.product-card h4 {
+  font-size: 0.9rem;
+  color: #222;
+}
+
+.product-card .price {
+  font-weight: bold;
+  color: #8b1818;
+}
+
+.product-card button {
+  width: 100%;
+  padding: 0.45rem;
+  background: #8b1818;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+/* Ticket */
+.ticket-panel {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  height: 100%;
+}
+
+.ticket-panel h2 {
+  text-align: center;
+  font-size: 1.1rem;
+  letter-spacing: 0.5px;
+}
+
+.ticket-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.ticket-section label {
+  font-size: 0.85rem;
+  font-weight: bold;
+}
+
+.ticket-section input[type="text"] {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.radio-group {
+  display: flex;
+  gap: 1rem;
+}
+
+.ticket-items {
+  flex: 1;
+  overflow-y: auto;
+  border-top: 1px dashed #ccc;
+  border-bottom: 1px dashed #ccc;
+  padding: 0.5rem 0;
+}
+
+.ticket-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.summary-line {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.95rem;
+  font-weight: bold;
+}
+
+.summary-line.total {
+  font-size: 1.15rem;
+  color: #8b1818;
+}
+
+.btn-checkout {
+  padding: 0.75rem;
+  background: #8b1818;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  width: 100%;
+}
