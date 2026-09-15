@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Control de Inventario - Volovando Voy</title>
+  <link rel="stylesheet" href="../../../assets/css/global.css">
+  <link rel="stylesheet" href="inventory.css">
+</head>
+<body>
+  <div class="inventory-container">
+    <header class="inventory-header">
+      <div>
+        <h1>Control de Inventario</h1>
+        <p>Monitoreo y administración de stock de productos</p>
+      </div>
+      <a href="../../../index.html" class="btn-primary" style="text-decoration: none;">Ir al Inicio</a>
+    </header>
+
+    <!-- Métricas -->
+    <div class="inventory-summary">
+      <div class="summary-card">
+        <h3>Total de Productos</h3>
+        <div class="value" id="metric-total">0</div>
+      </div>
+      <div class="summary-card">
+        <h3>Unidades Totales</h3>
+        <div class="value" id="metric-units">0</div>
+      </div>
+      <div class="summary-card alert">
+        <h3>Productos con Stock Bajo</h3>
+        <div class="value" id="metric-alerts">0</div>
+      </div>
+    </div>
+
+    <!-- Barra de búsqueda -->
+    <div class="inventory-toolbar">
+      <input type="text" id="input-search" class="search-box" placeholder="Buscar por nombre o categoría...">
+    </div>
+
+    <!-- Tabla de stock -->
+    <div class="table-wrapper">
+      <table class="inventory-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Producto</th>
+            <th>Categoría</th>
+            <th>Precio</th>
+            <th>Stock Actual</th>
+            <th>Stock Mínimo</th>
+            <th>Estado</th>
+            <th>Ajuste de Stock</th>
+          </tr>
+        </thead>
+        <tbody id="inventory-tbody">
+          <!-- Inyectado por JavaScript -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script type="module" src="inventory.js"></script>
+</body>
+</html>
