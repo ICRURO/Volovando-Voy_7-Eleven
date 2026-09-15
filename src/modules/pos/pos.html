@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Volovando Voy - Punto de Venta</title>
+  <link rel="stylesheet" href="pos.css">
+</head>
+<body>
+  <aside class="sidebar">
+    <h1 class="brand-title">VOLOVANDO<br>VOY</h1>
+    <img src="/assets/volovino.png" alt="Logo" class="brand-logo">
+    <ul class="menu-list">
+      <li class="menu-item">HOME</li>
+      <li class="menu-item active">MENÚ</li>
+      <li class="menu-item">PEDIDOS</li>
+      <li class="menu-item">CLIENTES</li>
+      <li class="menu-item">INVENTARIO</li>
+      <li class="menu-item">CONFIG</li>
+    </ul>
+  </aside>
+
+  <main class="main-container">
+    <section class="card-panel">
+      <h2 class="panel-title">CATÁLOGO DE PRODUCTOS</h2>
+      <input type="text" id="searchProduct" class="input-search" placeholder="Buscar producto...">
+      <div class="category-tabs">
+        <button class="tab-btn active" data-cat="salados">SALADOS</button>
+        <button class="tab-btn" data-cat="dulces">DULCES</button>
+      </div>
+      <div class="catalog-grid" id="catalogGrid"></div>
+    </section>
+
+    <section class="card-panel">
+      <h2 class="panel-title">DETALLE DEL TICKET</h2>
+      <div class="ticket-row">
+        <label><strong>CLIENTE ASOCIADO:</strong></label>
+        <input type="text" id="searchClient" class="input-search" placeholder="Buscar por ID (ej. CLI-001)...">
+        <div id="clientInfo" style="font-size: 0.85rem; color: #444; min-height: 18px;">-- Sin cliente asociado --</div>
+      </div>
+
+      <hr class="separator">
+
+      <div class="ticket-row">
+        <label><strong>TIPO DE VENTA:</strong></label><br>
+        <label><input type="radio" name="saleType" value="Mostrador" checked> Mostrador</label>
+        <label style="margin-left: 20px;"><input type="radio" name="saleType" value="Domicilio"> Domicilio</label>
+      </div>
+
+      <hr class="separator">
+
+      <div class="ticket-items" id="ticketItems"></div>
+
+      <hr class="separator">
+
+      <div class="totals-area">
+        <div class="totals-line"><span>SUBTOTAL:</span><span id="subtotalLabel">$0.00</span></div>
+        <div class="totals-line"><span>TOTAL A PAGAR:</span><span id="totalLabel">$0.00</span></div>
+      </div>
+
+      <button id="btnCheckout" class="btn-checkout">PROCEDER AL PAGO</button>
+    </section>
+  </main>
+
+  <script type="module" src="pos.js"></script>
+</body>
+</html>

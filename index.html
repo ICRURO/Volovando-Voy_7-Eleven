@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Volovando Voy</title>
+  <link rel="stylesheet" href="assets/css/global.css">
+</head>
+<body>
+  <aside class="sidebar">
+    <h1 class="brand-title">VOLOVANDO<br>VOY</h1>
+    <img src="assets/volovan.png" alt="Logo" class="brand-logo">
+    <nav class="menu-list">
+      <a href="#" onclick="cargarModulo('home')">HOME</a>
+      <a href="#" onclick="cargarModulo('pos')" class="active">MENÚ</a>
+      <a href="#" onclick="cargarModulo('pedidos')">PEDIDOS</a>
+      <a href="#" onclick="cargarModulo('clientes')">CLIENTES</a>
+      <a href="#" onclick="cargarModulo('inventario')">INVENTARIO</a>
+      <a href="#" onclick="cargarModulo('config')">CONFIG</a>
+    </nav>
+  </aside>
+
+  <main id="app-viewport">
+    <iframe id="modulo-frame" src="src/modules/pos/pos.html" frameborder="0"></iframe>
+  </main>
+
+  <script>
+    function cargarModulo(modulo) {
+      const rutas = {
+        pos: 'src/modules/pos/pos.html',
+        inventario: 'src/modules/inventario/inventario.html',
+        clientes: 'src/modules/clientes/clientes.html'
+      };
+      if (rutas[modulo]) {
+        document.getElementById('modulo-frame').src = rutas[modulo];
+      }
+    }
+  </script>
+</body>
+</html>
