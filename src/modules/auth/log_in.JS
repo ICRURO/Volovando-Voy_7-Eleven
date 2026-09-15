@@ -34,6 +34,10 @@ document.addEventListener("DOMContentLoaded", () => {
         mensajeExito.textContent = "Iniciando sesión... ¡Bienvenido!";
         mensajeExito.style.display = "block";
 
-        // Aquí conectarás con tu API de autenticación
+        // REDIRECCIÓN AL DASHBOARD PRINCIPAL
+        // Se suben dos niveles (../../) para salir de 'auth' y 'modules', llegando a 'src/dashboard.html'
+        setTimeout(() => {
+            window.location.href = "../../dashboard.html";
+        }, 1000);
     });
 });

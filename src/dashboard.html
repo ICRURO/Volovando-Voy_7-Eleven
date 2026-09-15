@@ -3,93 +3,43 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Volovando Voy</title>
-  <link rel="stylesheet" href="assets/css/global.css">
+  <title>Volovando Voy - Dashboard</title>
+  <!-- Sube un nivel (..) para encontrar assets desde src/ -->
+  <link rel="stylesheet" href="../assets/css/global.css">
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-    body {
-      display: flex;
-      height: 100vh;
-      width: 100vw;
-      overflow: hidden;
-      font-family: Arial, sans-serif;
-    }
-    /* Barra lateral */
-    .sidebar {
-      width: 250px;
-      min-width: 250px;
-      background-color: #8b1818;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 2rem 1rem;
-      color: white;
-    }
-    .sidebar h1 {
-      font-size: 1.4rem;
-      text-align: center;
-      margin-bottom: 1rem;
-      font-weight: 800;
-    }
-    .sidebar img {
-      width: 90px;
-      margin-bottom: 2rem;
-    }
-    .sidebar-nav {
-      display: flex;
-      flex-direction: column;
-      gap: 0.8rem;
-      width: 100%;
-    }
-    .nav-btn {
-      background: none;
-      border: none;
-      color: #ffffff;
-      text-align: left;
-      font-size: 0.95rem;
-      font-weight: bold;
-      padding: 0.75rem 1rem;
-      border-radius: 6px;
-      cursor: pointer;
-      width: 100%;
-      transition: background 0.2s;
-    }
-    .nav-btn:hover, .nav-btn.active {
-      background-color: rgba(255, 255, 255, 0.2);
-    }
-    /* Área principal a pantalla completa */
-    .main-content {
-      flex: 1;
-      height: 100%;
-      background-color: #f6f3ed;
-    }
-    #content-frame {
-      width: 100%;
-      height: 100%;
-      border: none;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { display: flex; height: 100vh; width: 100vw; overflow: hidden; font-family: Arial, sans-serif; background-color: #f6f3ed; }
+    .sidebar { width: 250px; min-width: 250px; background-color: #8b1818; display: flex; flex-direction: column; align-items: center; padding: 2rem 1rem; color: white; }
+    .sidebar h1 { font-size: 1.4rem; text-align: center; margin-bottom: 1rem; font-weight: 800; }
+    .sidebar img { width: 90px; margin-bottom: 2rem; }
+    .sidebar-nav { display: flex; flex-direction: column; gap: 0.8rem; width: 100%; }
+    .nav-btn { background: none; border: none; color: #ffffff; text-align: left; font-size: 0.95rem; font-weight: bold; padding: 0.75rem 1rem; border-radius: 6px; cursor: pointer; width: 100%; transition: background 0.2s; }
+    .nav-btn:hover, .nav-btn.active { background-color: rgba(255, 255, 255, 0.2); }
+    .logout-btn { margin-top: auto; background-color: #d32f2f; text-align: center; justify-content: center; }
+    .main-content { flex: 1; height: 100%; }
+    #content-frame { width: 100%; height: 100%; border: none; }
   </style>
 </head>
 <body>
 
   <aside class="sidebar">
     <h1>VOLOVANDO<br>VOY</h1>
-    <img src="assets/volovino.png" alt="Mascota">
+    <img src="../assets/volovino.png" alt="Mascota">
 
     <nav class="sidebar-nav">
-      <button class="nav-btn active" onclick="loadModule('src/modules/pos/pos.html', this)">MENÚ / VENTAS</button>
-      <button class="nav-btn" onclick="loadModule('src/modules/inventory/inventory.html', this)">INVENTARIO</button>
+      <!-- Rutas relativas apuntando a la carpeta modules -->
+      <button class="nav-btn active" onclick="loadModule('modules/pos/pos.html', this)">MENÚ / VENTAS</button>
+      <button class="nav-btn" onclick="loadModule('modules/inventory/inventory.html', this)">INVENTARIO</button>
       <button class="nav-btn" onclick="alert('Módulo de pedidos en desarrollo')">PEDIDOS</button>
       <button class="nav-btn" onclick="alert('Módulo de clientes en desarrollo')">CLIENTES</button>
+      
+      <!-- Botón para cerrar sesión -->
+      <button class="nav-btn logout-btn" onclick="logout()">CERRAR SESIÓN</button>
     </nav>
   </aside>
 
   <main class="main-content">
-    <iframe id="content-frame" src="src/modules/pos/pos.html"></iframe>
+    <iframe id="content-frame" src="modules/pos/pos.html"></iframe>
   </main>
 
   <script>
@@ -97,6 +47,11 @@
       document.getElementById('content-frame').src = url;
       document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
+    }
+
+    function logout() {
+      // Regresa al index principal que redirige al login
+      window.location.href = "../index.html"; 
     }
   </script>
 </body>
