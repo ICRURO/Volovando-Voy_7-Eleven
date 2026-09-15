@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Volovando Voy - Iniciar Sesión</title>
+    <!-- Conexión al CSS de login -->
+    <link rel="stylesheet" href="/Log_in/logs_css/log_in.css">
+</head>
+<body>
+
+    <!-- Menú lateral izquierdo -->
+    <aside class="sidebar">
+        <div class="brand-title">
+            VOLOVANDO<br>VOY
+        </div>
+        
+        <img src="/img/mascota.png" alt="Mascota Volován" class="sidebar-logo">
+
+        <nav class="nav-menu">
+            <a href="#">HOME</a>
+            <a href="#">MENÚ</a>
+            <a href="#">PEDIDOS</a>
+            <a href="#">CLIENTES</a>
+            <a href="#">INVENTARIO</a>
+            <a href="#">CONFIG</a>
+        </nav>
+    </aside>
+
+    <!-- Contenido principal / Tarjeta de Login -->
+    <main class="main-content">
+        <section class="form-card">
+            
+            <!-- Banner superior naranja -->
+            <div class="header-badge">
+                VOLOVANDO VOY
+            </div>
+
+            <h1 class="card-title">INICIAR SESIÓN</h1>
+
+            <p class="subtitle">Ingresa tus credenciales para acceder al sistema</p>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email">Correo electrónico</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        placeholder="ej. usuario@correo.com" 
+                        required 
+                    />
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Contraseña</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        placeholder="••••••••" 
+                        required 
+                    />
+                </div>
+
+                <button type="submit" class="btn-submit" id="btnLogin">
+                    INICIAR SESIÓN
+                </button>
+
+                <!-- Mensajes dinámicos de JS -->
+                <p id="mensajeError" class="msg-error"></p>
+                <p id="mensajeExito" class="msg-success"></p>
+
+                <!-- Enlace inferior que conecta a sign_in.html -->
+                <div class="login-footer-link">
+                    ¿No tienes una cuenta? <a href="/" id="linkRegistro">Crear una cuenta</a>
+                </div>
+            </form>
+
+        </section>
+    </main>
+
+    <!-- Conexión al JS de login (ojo a las mayúsculas de tu archivo: log_in.JS) -->
+    <script src="/Log_in/logs_JS/log_in.js"></script>
+</body>
+</html>
