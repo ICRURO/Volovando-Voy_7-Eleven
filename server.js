@@ -1,30 +1,60 @@
 const express = require('express');
 const path = require('path');
+const fs = require('fs'); 
 
 const app = express();
 const PORT = 3000;
 
-// 1. Servir los archivos estáticos de toda la raíz del proyecto
+app.use(express.json());
+
 app.use(express.static(__dirname));
 
-// 2. Servir también la carpeta logs_html directamente para que URLs como /log_in.html funcionen
-app.use(express.static(path.join(__dirname, 'Log_in', 'logs_html')));
+app.use(express.static(path.join(__dirname, 'src', 'modules', 'auth')));
 
-// 3. Rutas amigables
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'Log_in', 'logs_html', 'sign_in.html'));
+    res.sendFile(path.join(__dirname, 'src', 'modules', 'auth', 'sign_in.html'));
 });
 
 app.get('/login', (req, res) => {
-    res.sendFile(path.join(__dirname, 'Log_in', 'logs_html', 'log_in.html'));
+    res.sendFile(path.join(__dirname, 'src', 'modules', 'auth', 'log_in.html'));
 });
 
 app.get('/signin', (req, res) => {
-    res.sendFile(path.join(__dirname, 'Log_in', 'logs_html', 'sign_in.html'));
+    res.sendFile(path.join(__dirname, 'src', 'modules', 'auth', 'sign_in.html'));
+});
+
+const dbPath = path.join(__dirname, 'database.json');
+
+function readDB() {
+    const data = fs.readFileSync(dbPath, 'utf8');
+    return JSON.parse(data);
+}
+
+function writeDB(data) {
+    fs.writeFileSync(dbPath, JSON.stringify(data, null, 2), 'utf8');
+}
+
+app.get('/api/inventory', (req, res) => {
+    const db = readDB();
+    res.json(db.inventory);
+});
+
+app.post('/api/inventory/descontar', (req, res) => {
+    const { itemsVendidos } = req.body; 
+    const db = readDB();
+
+    itemsVendidos.forEach(item => {
+        const producto = db.inventory.find(p => p.id === item.id);
+        if (producto) {
+            producto.stock -= item.cantidad;
+        }
+    });
+
+    writeDB(db);
+    res.json({ message: "Inventario descontado exitosamente" });
 });
 
 app.listen(PORT, () => {
     console.log(`>>> Servidor activo en: http://127.0.0.1:${PORT}`);
-    console.log(`>>> Registro (sign_in): http://127.0.0.1:${PORT}/`);
-    console.log(`>>> Iniciar sesión (log_in): http://127.0.0.1:${PORT}/login`);
+    console.log(`>>> Iniciar sesión (login): http://127.0.0.1:${PORT}/login`);
 });

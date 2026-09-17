@@ -1,0 +1,31 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "Administrador",
+      "email": "admin@volovando.com",
+      "password": "123",
+      "role": "admin"
+    }
+  ],
+  "inventory": [
+    {
+      "id": 1,
+      "nombre": "Volován de Jamón y Queso",
+      "categoria": "Volovanes Clásicos",
+      "precio": 25.00,
+      "stock": 35,
+      "stockMinimo": 10,
+      "imagen": "../../../assets/volovan.png"
+    },
+    {
+      "id": 2,
+      "nombre": "Volován de Pollo",
+      "categoria": "Volovanes Clásicos",
+      "precio": 25.00,
+      "stock": 8,
+      "stockMinimo": 10,
+      "imagen": "../../../assets/volovan.png"
+    }
+  ]
+}
