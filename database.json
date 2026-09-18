@@ -1,31 +1,175 @@
 {
-  "users": [
+  "usuarios": [
     {
-      "id": 1,
-      "name": "Administrador",
-      "email": "admin@volovando.com",
+      "id": "EMP-001",
+      "nombre": "Maria de Lourdes",
+      "correo": "admin@volovando.com",
       "password": "123",
-      "role": "admin"
-    }
-  ],
-  "inventory": [
-    {
-      "id": 1,
-      "nombre": "Volován de Jamón y Queso",
-      "categoria": "Volovanes Clásicos",
-      "precio": 25.00,
-      "stock": 35,
-      "stockMinimo": 10,
-      "imagen": "../../../assets/volovan.png"
+      "rol": "admin",
+      "sucursal": "Xalapa Centro",
+      "estatus": "desactivado"
     },
     {
-      "id": 2,
-      "nombre": "Volován de Pollo",
-      "categoria": "Volovanes Clásicos",
-      "precio": 25.00,
-      "stock": 8,
-      "stockMinimo": 10,
-      "imagen": "../../../assets/volovan.png"
+      "id": "EMP-002",
+      "nombre": "Antonio Tejeda",
+      "correo": "antonio@volovando.com",
+      "password": "123",
+      "rol": "empleado",
+      "sucursal": "Xalapa Centro",
+      "estatus": "activo"
+    },
+    {
+      "id": "EMP-003",
+      "nombre": "Ian Carlo",
+      "correo": "ian@volovando.com",
+      "password": "123",
+      "rol": "admin",
+      "sucursal": "Xalapa Centro",
+      "estatus": "activo"
+    },
+    {
+      "id": "EMP-004",
+      "nombre": "Fernando",
+      "correo": "fernando@volovando.com",
+      "password": "123",
+      "rol": "empleado",
+      "sucursal": "Xalapa Centro",
+      "estatus": "activo"
+    },
+    {
+      "id": "EMP-005",
+      "nombre": "Aradan",
+      "correo": "aradan@volovando.com",
+      "password": "123",
+      "rol": "admin",
+      "sucursal": "Xalapa Centro",
+      "estatus": "activo"
+    },
+    {
+      "id": "EMP-006",
+      "nombre": "Diego",
+      "correo": "diego@volovando.com",
+      "password": "123",
+      "rol": "empleado",
+      "sucursal": "Xalapa Centro",
+      "estatus": "activo"
+    },
+    {
+      "id": "CLI-1001",
+      "nombre": "Sara",
+      "correo": "Sara@correo.com",
+      "password": "password",
+      "rol": "cliente",
+      "saldo_cashback": 0.00,
+      "estatus": "activo"
     }
-  ]
+  ],
+  "inventario": [
+    {
+      "id": "VOL-JQ",
+      "nombre": "Volován de Jamón y Queso",
+      "categoria": "Clásicos",
+      "precio_venta": 25.00,
+      "stock_actual": 35,
+      "umbral_minimo": 10,
+      "imagen": "../../../assets/volovan.png",
+      "lotes": [
+        {
+          "id_lote": "L-1001",
+          "cantidad": 35,
+          "fecha_ingreso": "2026-09-17T08:00:00Z",
+          "fecha_caducidad": "2026-09-20T23:59:59Z",
+          "proveedor": "Cocina Central"
+        }
+      ]
+    },
+    {
+      "id": "VOL-PO",
+      "nombre": "Volován de Pollo",
+      "categoria": "Clásicos",
+      "precio_venta": 25.00,
+      "stock_actual": 8,
+      "umbral_minimo": 10,
+      "imagen": "../../../assets/volovan.png",
+      "lotes": [
+        {
+          "id_lote": "L-1002",
+          "cantidad": 8,
+          "fecha_ingreso": "2026-09-16T08:00:00Z",
+          "fecha_caducidad": "2026-09-19T23:59:59Z",
+          "proveedor": "Cocina Central"
+        }
+      ]
+    },
+    {
+      "id": "VOL-AT",
+      "nombre": "Volován de Atún",
+      "categoria": "Clásicos",
+      "precio_venta": 28.00,
+      "stock_actual": 14,
+      "umbral_minimo": 8,
+      "imagen": "../../../assets/volovan.png",
+      "lotes": [
+        {
+          "id_lote": "L-1003",
+          "cantidad": 14,
+          "fecha_ingreso": "2026-09-17T08:00:00Z",
+          "fecha_caducidad": "2026-09-21T23:59:59Z",
+          "proveedor": "Cocina Central"
+        }
+      ]
+    },
+    {
+      "id": "BEB-600",
+      "nombre": "Refresco 600ml",
+      "categoria": "Bebidas",
+      "precio_venta": 18.00,
+      "stock_actual": 22,
+      "umbral_minimo": 15,
+      "imagen": "../../../assets/volovino.png",
+      "lotes": [
+        {
+          "id_lote": "L-1004",
+          "cantidad": 22,
+          "fecha_ingreso": "2026-09-10T08:00:00Z",
+          "fecha_caducidad": "2027-03-01T23:59:59Z",
+          "proveedor": "Coca-Cola FEMSA"
+        }
+      ]
+    }
+  ],
+  "ventas": [
+    {
+      "id_ticket": "TK-0001",
+      "fecha": "2026-09-18T10:30:00Z",
+      "id_empleado": "EMP-002",
+      "id_cliente": "CLI-1001",
+      "total": 43.00,
+      "metodo_pago": "efectivo",
+      "cashback_generado": 2.15,
+      "articulos": [
+        {
+          "id_producto": "VOL-JQ",
+          "cantidad": 1,
+          "precio_unitario": 25.00
+        },
+        {
+          "id_producto": "BEB-600",
+          "cantidad": 1,
+          "precio_unitario": 18.00
+        }
+      ]
+    }
+  ],
+  "turnos": [
+     {
+      "id_turno": "T-001",
+      "id_empleado": "EMP-002",
+      "fecha_inicio": "2026-09-18T07:00:00Z",
+      "fecha_fin": null,
+      "fondo_caja_inicial": 500.00,
+      "estatus": "abierto"
+    }
+  ],
+  "movimientos_inventario": []
 }
