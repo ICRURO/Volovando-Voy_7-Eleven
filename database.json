@@ -3,7 +3,7 @@
     {
       "id": "EMP-001",
       "nombre": "Maria de Lourdes",
-      "correo": "admin@volovando.com",
+      "correo": "lourdes_admin@volovando.com",
       "password": "123",
       "rol": "admin",
       "sucursal": "Xalapa Centro",
@@ -21,7 +21,7 @@
     {
       "id": "EMP-003",
       "nombre": "Ian Carlo",
-      "correo": "ian@volovando.com",
+      "correo": "ian_admin@volovando.com",
       "password": "123",
       "rol": "admin",
       "sucursal": "Xalapa Centro",
@@ -39,7 +39,7 @@
     {
       "id": "EMP-005",
       "nombre": "Aradan",
-      "correo": "aradan@volovando.com",
+      "correo": "aradan_admin@volovando.com",
       "password": "123",
       "rol": "admin",
       "sucursal": "Xalapa Centro",
@@ -60,7 +60,7 @@
       "correo": "Sara@correo.com",
       "password": "password",
       "rol": "cliente",
-      "saldo_cashback": 0.00,
+      "saldo_cashback": 0,
       "estatus": "activo"
     }
   ],
@@ -69,7 +69,7 @@
       "id": "VOL-JQ",
       "nombre": "Volován de Jamón y Queso",
       "categoria": "Clásicos",
-      "precio_venta": 25.00,
+      "precio_venta": 25,
       "stock_actual": 35,
       "umbral_minimo": 10,
       "imagen": "../../../assets/volovan.png",
@@ -87,7 +87,7 @@
       "id": "VOL-PO",
       "nombre": "Volován de Pollo",
       "categoria": "Clásicos",
-      "precio_venta": 25.00,
+      "precio_venta": 25,
       "stock_actual": 8,
       "umbral_minimo": 10,
       "imagen": "../../../assets/volovan.png",
@@ -105,7 +105,7 @@
       "id": "VOL-AT",
       "nombre": "Volován de Atún",
       "categoria": "Clásicos",
-      "precio_venta": 28.00,
+      "precio_venta": 28,
       "stock_actual": 14,
       "umbral_minimo": 8,
       "imagen": "../../../assets/volovan.png",
@@ -123,7 +123,7 @@
       "id": "BEB-600",
       "nombre": "Refresco 600ml",
       "categoria": "Bebidas",
-      "precio_venta": 18.00,
+      "precio_venta": 18,
       "stock_actual": 22,
       "umbral_minimo": 15,
       "imagen": "../../../assets/volovino.png",
@@ -144,32 +144,51 @@
       "fecha": "2026-09-18T10:30:00Z",
       "id_empleado": "EMP-002",
       "id_cliente": "CLI-1001",
-      "total": 43.00,
+      "total": 43,
       "metodo_pago": "efectivo",
       "cashback_generado": 2.15,
       "articulos": [
         {
           "id_producto": "VOL-JQ",
           "cantidad": 1,
-          "precio_unitario": 25.00
+          "precio_unitario": 25
         },
         {
           "id_producto": "BEB-600",
           "cantidad": 1,
-          "precio_unitario": 18.00
+          "precio_unitario": 18
         }
       ]
     }
   ],
   "turnos": [
-     {
+    {
       "id_turno": "T-001",
       "id_empleado": "EMP-002",
       "fecha_inicio": "2026-09-18T07:00:00Z",
+      "fecha_fin": "2026-09-21T08:06:29.468Z",
+      "fondo_caja_inicial": 500,
+      "estatus": "cerrado",
+      "efectivo_cierre_real": 2500,
+      "ventas_efectivo_sistema": 43,
+      "diferencia": 1957
+    },
+    {
+      "id_turno": "T-002",
+      "id_empleado": "EMP-004",
+      "fecha_inicio": "2026-09-21T08:56:13.613Z",
       "fecha_fin": null,
-      "fondo_caja_inicial": 500.00,
+      "fondo_caja_inicial": 1000,
+      "ventas_efectivo_sistema": 0,
+      "efectivo_cierre_real": null,
+      "diferencia": null,
       "estatus": "abierto"
     }
   ],
-  "movimientos_inventario": []
+  "movimientos_inventario": [],
+  "horarios_config": {
+    "hora_apertura": "07:30",
+    "hora_cierre": "21:00",
+    "tolerancia_minutos": 12
+  }
 }

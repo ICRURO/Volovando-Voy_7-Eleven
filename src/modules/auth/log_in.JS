@@ -1,43 +1,69 @@
 document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("loginForm");
-    const email = document.getElementById("email");
-    const password = document.getElementById("password");
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
     const mensajeError = document.getElementById("mensajeError");
     const mensajeExito = document.getElementById("mensajeExito");
 
     const limpiarMensajes = () => {
-        mensajeError.textContent = "";
-        mensajeError.style.display = "none";
-        mensajeExito.textContent = "";
-        mensajeExito.style.display = "none";
+        if (mensajeError) {
+            mensajeError.textContent = "";
+            mensajeError.style.display = "none";
+        }
+        if (mensajeExito) {
+            mensajeExito.textContent = "";
+            mensajeExito.style.display = "none";
+        }
     };
 
-    form.addEventListener("submit", (e) => {
-        e.preventDefault();
-        limpiarMensajes();
+    // Envío del formulario
+    if (form) {
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            limpiarMensajes();
 
-        // Validación básica
-        if (!email.value.trim() || !password.value.trim()) {
-            mensajeError.textContent = "Por favor ingresa tu correo y contraseña.";
-            mensajeError.style.display = "block";
-            return;
-        }
+            const correoTexto = emailInput ? emailInput.value.trim() : "";
+            const passTexto = passwordInput ? passwordInput.value.trim() : "";
 
-        const credenciales = {
-            email: email.value.trim(),
-            password: password.value
-        };
+            if (!correoTexto || !passTexto) {
+                mensajeError.textContent = "Por favor ingresa tu correo y contraseña.";
+                mensajeError.style.display = "block";
+                return;
+            }
 
-        console.log("Intentando iniciar sesión con:", credenciales);
+            try {
+                // Petición real al servidor enviando el correo
+                const res = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        correo: correoTexto,
+                        email: correoTexto,
+                        password: passTexto
+                    })
+                });
 
-        // Feedback visual
-        mensajeExito.textContent = "Iniciando sesión... ¡Bienvenido!";
-        mensajeExito.style.display = "block";
+                const data = await res.json();
 
-        // REDIRECCIÓN AL DASHBOARD PRINCIPAL
-        // Se suben dos niveles (../../) para salir de 'auth' y 'modules', llegando a 'src/dashboard.html'
-        setTimeout(() => {
-            window.location.href = "../../dashboard.html";
-        }, 1000);
-    });
+                if (!res.ok) {
+                    mensajeError.textContent = data.message || "Error al iniciar sesión.";
+                    mensajeError.style.display = "block";
+                    return;
+                }
+
+                // La sesión queda viva únicamente en la memoria del servidor
+                mensajeExito.textContent = "Iniciando sesión... ¡Bienvenido!";
+                mensajeExito.style.display = "block";
+
+                setTimeout(() => {
+                    window.location.href = "../../dashboard.html";
+                }, 1000);
+
+            } catch (error) {
+                console.error("Error en login:", error);
+                mensajeError.textContent = "Error de conexión con el servidor.";
+                mensajeError.style.display = "block";
+            }
+        });
+    }
 });

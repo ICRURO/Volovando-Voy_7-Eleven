@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control de Turnos y Empleados</title>
+    <link rel="stylesheet" href="/shifts_admin.css">
+</head>
+<body>
+
+    <div class="admin-container">
+        
+        <div class="admin-header">
+            <h1>CONTROL DE TURNOS Y EMPLEADOS</h1>
+        </div>
+
+        <!-- CONFIGURACIÓN DE HORARIOS DE ATENCIÓN -->
+        <div class="card">
+            <h2 class="card-title">CONFIGURACIÓN DE HORARIOS DE ATENCIÓN</h2>
+            
+            <form id="form-horarios">
+                <div class="horarios-grid">
+                    <div class="form-group">
+                        <label for="hora_apertura">Hora Apertura:</label>
+                        <input type="time" id="hora_apertura" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="hora_cierre">Hora Cierre:</label>
+                        <input type="time" id="hora_cierre" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tolerancia_minutos">Tolerancia (min):</label>
+                        <input type="number" id="tolerancia_minutos" min="0" required>
+                    </div>
+                </div>
+
+                <button type="submit" id="btn-guardar-horarios" class="btn-primary">Guardar Horarios</button>
+            </form>
+            <div id="mensaje-horarios" class="alert hidden"></div>
+        </div>
+
+        <!-- HISTORIAL DE TURNOS Y CIERRES DE CAJA -->
+        <div class="card">
+            <h2 class="card-title">HISTORIAL DE TURNOS Y CIERRES DE CAJA</h2>
+
+            <div class="filtro-container">
+                <input type="text" id="filtro-empleado" placeholder="Filtrar por ID de empleado..">
+                <button type="button" id="btn-consultar" class="btn-primary">Consultar Historial</button>
+            </div>
+
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>ID Turno</th>
+                            <th>Empleado</th>
+                            <th>Entrada / Puntualidad</th>
+                            <th>Salida</th>
+                            <th>Fondo Inicial</th>
+                            <th>Ventas Sistema</th>
+                            <th>Efectivo Real</th>
+                            <th>Diferencia Caja</th>
+                            <th>Estatus</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-historial-body">
+                        <tr>
+                            <td colspan="9" style="text-align: center; padding: 1.5rem; color: #666;">
+                                Haz clic en "Consultar Historial" para cargar registros.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id="mensaje-historial" class="alert hidden"></div>
+        </div>
+
+    </div>
+
+    <script src="/shifts_admin.js"></script>
+</body>
+</html>

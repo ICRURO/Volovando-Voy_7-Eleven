@@ -28,11 +28,12 @@
 
     <nav class="sidebar-nav">
       <!-- Rutas relativas apuntando a la carpeta modules -->
-      <button class="nav-btn active" onclick="loadModule('modules/pos/pos.html', this)">MENÚ / VENTAS</button>
-      <button class="nav-btn" onclick="loadModule('modules/inventory/inventory.html', this)">INVENTARIO</button>
-      <button class="nav-btn" onclick="alert('Módulo de pedidos en desarrollo')">PEDIDOS</button>
-      <button class="nav-btn" onclick="alert('Módulo de clientes en desarrollo')">CLIENTES</button>
-      
+      <button class="nav-btn only-admin active" onclick="loadModule('modules/pos/pos.html', this)">MENÚ / VENTAS</button>
+      <button class="nav-btn only-admin" onclick="loadModule('modules/inventory/inventory.html', this)">INVENTARIO</button>
+      <button class="nav-btn only-admin" onclick="alert('Módulo de pedidos en desarrollo')">PEDIDOS</button>
+      <button class="nav-btn only-admin" onclick="alert('Módulo de clientes en desarrollo')">CLIENTES</button>
+      <button class="nav-btn only-admin" onclick="loadModule('/shifts/admin', this)">TURNOS Y EMPLEADOS</button>
+
       <!-- Botón para cerrar sesión -->
       <button class="nav-btn logout-btn" onclick="logout()">CERRAR SESIÓN</button>
     </nav>
@@ -43,16 +44,44 @@
   </main>
 
   <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const frame = document.getElementById('content-frame');
+
+      try {
+        // Le pide la información de la sesión al servidor
+        const res = await fetch('/api/auth/session');
+        
+        if (!res.ok) {
+          window.location.href = '/login';
+          return;
+        }
+
+        const usuario = await res.json();
+
+        if (usuario.rol === 'empleado') {
+          document.querySelectorAll('.only-admin').forEach(btn => btn.style.display = 'none');
+          if (frame) frame.src = '/shifts/empleado';
+        } else {
+          document.querySelectorAll('.only-admin').forEach(btn => btn.style.display = 'block');
+          if (frame) frame.src = 'modules/pos/pos.html';
+        }
+      } catch (error) {
+        console.error("Error al consultar sesión del servidor.");
+      }
+    });
+
     function loadModule(url, btn) {
       document.getElementById('content-frame').src = url;
       document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
+      if (btn) btn.classList.add('active');
     }
 
     function logout() {
-      // Regresa al index principal que redirige al login
+      localStorage.clear();
       window.location.href = "../index.html"; 
     }
-  </script>
+</script>
+
+
 </body>
 </html>
