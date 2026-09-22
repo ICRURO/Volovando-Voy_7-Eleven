@@ -35,7 +35,6 @@ body { background-color: #f6f3ed; padding: 20px; height: 100vh; overflow: hidden
 .summary-line { display: flex; justify-content: space-between; margin-bottom: 5px; color: #555; }
 .summary-line.total { font-size: 1.2rem; font-weight: bold; color: #000; margin-top: 10px; }
 
-<<<<<<< HEAD
 .product-card {
   border: 1px solid #e0e0e0;
   border-radius: 8px;
@@ -170,10 +169,8 @@ body { background-color: #f6f3ed; padding: 20px; height: 100vh; overflow: hidden
   width: 90px;
   size: 10;
 }
-=======
 /* Botones */
 .btn-primary { background: #8b1818; color: white; border: none; padding: 12px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 1rem; transition: background 0.2s;}
 .btn-primary:hover { background: #6b0f0f; }
 .btn-secondary { border: none; padding: 12px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 1rem; transition: opacity 0.2s; }
 .btn-secondary:hover { opacity: 0.8; }
->>>>>>> f4e287b1aa3ac1a76fa565a46935ba8eda4df663

@@ -11,16 +11,13 @@ const catalogGrid = document.getElementById("product-grid");
 const ticketItems = document.getElementById("ticket-items");
 const subtotalLabel = document.getElementById("subtotal");
 const totalLabel = document.getElementById("total");
-<<<<<<< HEAD
 const searchProduct = document.getElementById("search");
 const searchClient = document.getElementById("client-search");
 const clientInfo = document.getElementById("client-name");
 const btnCheckout = document.getElementById("btn-pay");
 const ckMetodoPago = document.getElementsByName("metodo-pago");
-=======
 const searchInput = document.getElementById("search");
 const promoInfo = document.getElementById("promo-info");
->>>>>>> f4e287b1aa3ac1a76fa565a46935ba8eda4df663
 
 // Cargar Base de Datos Real
 async function cargarBD() {
@@ -114,19 +111,17 @@ function renderTicket() {
     totalLabel.textContent = `$${totalFinal.toFixed(2)}`;
 }
 
-<<<<<<< HEAD
 searchClient.addEventListener('input', (e) => {
   const query = e.target.value.trim().toUpperCase();
   clienteActual = null;
   clientInfo.textContent = query ? "-- No encontrado --" : "-- Sin cliente asociado --";
-=======
+});
 // Búsqueda de Cliente
 document.getElementById("client-search").addEventListener("input", (e) => {
     const query = e.target.value.trim().toLowerCase();
     clienteActual = usuariosBD.find(u => u.rol === 'cliente' && (u.id.toLowerCase() === query || u.correo.includes(query)));
     
     document.getElementById("client-name").textContent = clienteActual ? clienteActual.nombre : "Público General";
->>>>>>> f4e287b1aa3ac1a76fa565a46935ba8eda4df663
 });
 
 // H12 y H28: Mostrar campos de domicilio
@@ -143,8 +138,8 @@ document.getElementById("btn-cancel").addEventListener("click", () => {
         alert("No hay productos en el ticket para cancelar.");
         return;
     }
+})
 
-<<<<<<< HEAD
 btnCheckout.addEventListener("click", () => {
   if (carrito.length === 0) {
     alert("El ticket está vacío.");
@@ -163,7 +158,6 @@ btnCheckout.addEventListener("click", () => {
   
   carrito = [];
   renderTicket();
-=======
     // Pedir contraseña de admin (Maria de Lourdes = 123)
     const pin = prompt("Requiere PIN de Administrador para anular ticket (Usa la clave: 123):");
     
@@ -186,7 +180,6 @@ btnCheckout.addEventListener("click", () => {
     } else {
         alert("PIN Incorrecto. Acción denegada.");
     }
->>>>>>> f4e287b1aa3ac1a76fa565a46935ba8eda4df663
 });
 
 // H14: Generar Comprobante de Venta
