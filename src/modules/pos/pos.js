@@ -12,6 +12,7 @@ const searchProduct = document.getElementById("search");
 const searchClient = document.getElementById("client-search");
 const clientInfo = document.getElementById("client-name");
 const btnCheckout = document.getElementById("btn-pay");
+const ckMetodoPago = document.getElementsByName("metodo-pago");
 
 function renderCatalogo() {
   const query = searchProduct.value.toLowerCase();
@@ -57,7 +58,7 @@ function renderTicket() {
   totalLabel.textContent = `$${total.toFixed(2)}`;
 }
 
-searchClient.addEventListener("input", (e) => {
+searchClient.addEventListener('input', (e) => {
   const query = e.target.value.trim().toUpperCase();
   clienteActual = null;
   clientInfo.textContent = query ? "-- No encontrado --" : "-- Sin cliente asociado --";
@@ -80,7 +81,15 @@ btnCheckout.addEventListener("click", () => {
     return;
   }
   const tipoVenta = document.querySelector('input[name="tipo-venta"]:checked').value;
-  alert(`Venta completada con éxito.\nTipo: ${tipoVenta}\nCliente: ${clienteActual ? clienteActual.nombre : "Mostrador general"}`);
+  const tipoPago = [];
+  var metodosPago = Array.from(document.querySelectorAll('input[name="metodo-pago"]:checked')).map(function(metodopago){
+    return metodopago.value;
+  });
+  metodosPago.forEach(element => {
+    tipoPago.push(element);
+  });
+  
+  alert(`Venta completada con éxito.\nTipo: ${tipoVenta}\nCliente: ${clienteActual ? clienteActual.nombre : "Mostrador general"}\nMétodo de pago: ${tipoPago}`);
   
   carrito = [];
   renderTicket();

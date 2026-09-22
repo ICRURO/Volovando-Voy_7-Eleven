@@ -188,3 +188,23 @@ body {
   cursor: pointer;
   width: 100%;
 }
+
+#input-efectivo {
+  width: 75px;
+  size: 10;
+}
+
+#input-tarjeta {
+  width: 65px;
+  size: 10;
+}
+
+#input-transferencia {
+  width: 115px;
+  size: 10;
+}
+
+#input-cashback {
+  width: 90px;
+  size: 10;
+}
