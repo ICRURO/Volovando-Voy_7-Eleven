@@ -2,59 +2,71 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Punto de Venta</title>
-  <link rel="stylesheet" href="../../../assets/css/global.css">
   <link rel="stylesheet" href="pos.css">
+  <title>Ventas</title>
 </head>
 <body>
   <div class="pos-container">
-    <main class="catalog">
-      <h2>CATÁLOGO DE PRODUCTOS</h2>
-
+    <!-- Panel Izquierdo: Catálogo -->
+    <div class="catalog-panel">
+      <h2>Catálogo de Productos</h2>
       <div class="search-bar">
         <input type="text" id="search" placeholder="Buscar producto...">
-      </div>
-
-      <div class="category-tabs">
-        <button class="tab-btn active" data-category="salados">SALADOS</button>
-        <button class="tab-btn" data-category="dulces">DULCES</button>
-      </div>
-
-      <div class="grid-productos product-grid" id="product-grid">
-      </div>
-    </main>
-
-    <aside class="ticket">
-      <h2>DETALLE DEL TICKET</h2>
-
-      <div class="client-search">
-        <label>CLIENTE ASOCIADO:</label>
-        <input type="text" id="client-search" placeholder="Buscar por ID (ej. CLI-001)...">
-        <span id="client-name">-- Sin cliente asociado --</span>
-      </div>
-
-      <div class="sale-type">
-        <label>TIPO DE VENTA:</label>
-        <div class="radio-options">
-          <label><input type="radio" name="tipo-venta" value="mostrador" checked> Mostrador</label>
-          <label><input type="radio" name="tipo-venta" value="domicilio"> Domicilio</label>
+        <div class="filters">
+          <!-- Modificado para coincidir con las categorías de tu base de datos -->
+          <button class="filter-btn active" data-cat="Todos">Todos</button>
+          <button class="filter-btn" data-cat="Clásicos">Clásicos</button>
+          <button class="filter-btn" data-cat="Especialidad">Especialidad</button>
+          <button class="filter-btn" data-cat="Bebidas">Bebidas</button>
         </div>
+      </div>
+      <div class="product-grid" id="product-grid">
+        <!-- Productos dinámicos -->
+      </div>
+    </div>
+
+    <!-- Panel Derecho: Ticket -->
+    <div class="ticket-panel">
+      <!-- H30: Identificación del empleado -->
+      <div id="empleado-info" style="text-align:right; font-size: 0.8rem; color: #555; margin-bottom: 5px;"></div>
+
+      <h2>Ticket</h2>
+      
+      <div class="client-section">
+        <label>Cliente:</label>
+        <input type="text" id="client-search" placeholder="ID o Teléfono">
+        <span id="client-name">Público General</span>
+      </div>
+
+      <!-- H12 y H28: Tipo de Venta y Domicilio -->
+      <div class="sale-type-section" style="margin: 10px 0;">
+        <label><input type="radio" name="tipo-venta" value="Mostrador" checked> Mostrador</label>
+        <label style="margin-left: 10px;"><input type="radio" name="tipo-venta" value="Domicilio"> Domicilio</label>
+      </div>
+
+      <div id="domicilio-fields" style="display: none; background: #f0f0f0; padding: 10px; border-radius: 5px; margin-bottom: 10px; font-size: 0.9rem;">
+        <input type="text" id="dom-direccion" placeholder="Dirección completa" style="width: 100%; margin-bottom: 5px; padding: 5px;">
+        <input type="text" id="dom-ref" placeholder="Referencia" style="width: 100%; margin-bottom: 5px; padding: 5px;">
       </div>
 
       <div class="ticket-items" id="ticket-items">
+        <!-- Ítems del ticket -->
       </div>
 
-      <div class="ticket-totals">
-        <div class="total-row">
-          <span>SUBTOTAL:</span>
+      <!-- H27: Descuentos / Combos -->
+      <div id="promo-info" style="color: #2e7d32; font-size: 0.85rem; font-weight: bold; margin: 5px 0;"></div>
+
+      <div class="ticket-summary">
+        <div class="summary-line">
+          <span>Subtotal:</span>
           <span id="subtotal">$0.00</span>
         </div>
-        <div class="total-row grand-total">
-          <span>TOTAL A PAGAR:</span>
+        <div class="summary-line total">
+          <span>Total a Pagar:</span>
           <span id="total">$0.00</span>
         </div>
-        <button id="btn-pay" class="btn-pay">PROCEDER AL PAGO</button>
       </div>
+<<<<<<< HEAD
       <br>
       <div>
         <label><input type="checkbox" name="metodo-pago" value="efectivo"> Efectivo</label>
@@ -73,8 +85,30 @@
         <label><input type="checkbox" name="pago-pendiente" value="pendiente"> ¿Pago pendiente?</label>
       </div>
     </aside>
+=======
+
+      <div style="display: flex; gap: 10px; margin-top: 15px;">
+        <button id="btn-pay" class="btn-primary" style="flex: 2;">Cobrar</button>
+        <!-- H29: Cancelar Ticket -->
+        <button id="btn-cancel" class="btn-secondary" style="flex: 1; background: #666; color: white;">Cancelar</button>
+      </div>
+    </div>
+>>>>>>> f4e287b1aa3ac1a76fa565a46935ba8eda4df663
   </div>
 
-  <script type="module" src="pos.js"></script>
+  <!-- H14: Modal de Recibo -->
+  <div id="receipt-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center;">
+    <div style="background:#fff; padding:20px; width:300px; text-align:center; font-family:monospace;">
+      <h3>VOLOVANDO VOY</h3>
+      <p>========================</p>
+      <div id="receipt-body" style="text-align:left; margin:15px 0; font-size:0.9rem;"></div>
+      <p>========================</p>
+      <p>¡Gracias por su compra!</p><br>
+      <button onclick="window.print()" style="padding:8px; background:#A6191E; color:white; border:none; cursor:pointer;">IMPRIMIR</button>
+      <button onclick="cerrarRecibo()" style="padding:8px; background:#666; color:white; border:none; cursor:pointer;">CERRAR</button>
+    </div>
+  </div>
+
+  <script src="pos.js"></script>
 </body>
 </html>

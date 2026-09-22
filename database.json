@@ -183,6 +183,39 @@
       "efectivo_cierre_real": null,
       "diferencia": null,
       "estatus": "abierto"
+    },
+    {
+      "id_turno": "T-003",
+      "id_empleado": "EMP-006",
+      "fecha_inicio": "2026-09-22T13:31:38.628Z",
+      "fecha_fin": "2026-09-22T13:31:56.149Z",
+      "fondo_caja_inicial": 500,
+      "ventas_efectivo_sistema": 0,
+      "efectivo_cierre_real": 500,
+      "diferencia": 0,
+      "estatus": "cerrado"
+    },
+    {
+      "id_turno": "T-004",
+      "id_empleado": "EMP-006",
+      "fecha_inicio": "2026-09-22T13:37:20.569Z",
+      "fecha_fin": "2026-09-22T13:37:30.560Z",
+      "fondo_caja_inicial": 1,
+      "ventas_efectivo_sistema": 0,
+      "efectivo_cierre_real": 1,
+      "diferencia": 0,
+      "estatus": "cerrado"
+    },
+    {
+      "id_turno": "T-005",
+      "id_empleado": "EMP-006",
+      "fecha_inicio": "2026-09-22T13:37:53.537Z",
+      "fecha_fin": "2026-09-22T13:39:11.306Z",
+      "fondo_caja_inicial": 1,
+      "ventas_efectivo_sistema": 0,
+      "efectivo_cierre_real": 1,
+      "diferencia": 0,
+      "estatus": "cerrado"
     }
   ],
   "movimientos_inventario": [],
