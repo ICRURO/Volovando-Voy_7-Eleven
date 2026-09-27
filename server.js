@@ -36,6 +36,7 @@ app.get('/shifts/admin', (req, res) => {
     res.sendFile(path.join(__dirname, 'src', 'modules', 'shifts', 'shifts_admin.html'));
 });
 
+
 app.get('/clients', (req, res) => {
     res.sendFile(path.join(__dirname, 'src', 'modules', 'clients', 'clients.html'));
 });
@@ -632,6 +633,30 @@ app.post('/api/ventas/registrar-con-cashback', (req, res) => {
         cashback_generado: cashbackGenerado,
         nuevo_saldo: cliente ? cliente.saldo_cashback : 0
     });
+});
+
+// Obtener inventario real desde database.json
+app.get('/api/inventory', (req, res) => {
+    const db = readDB();
+    res.json(db.inventario || []);
+});
+
+// Guardar/Actualizar inventario en database.json (sumar/restar stock)
+app.post('/api/inventory/update', (req, res) => {
+    const { id, stock } = req.body;
+    const db = readDB();
+
+    if (!db.inventario) db.inventario = [];
+
+    const producto = db.inventario.find(p => String(p.id) === String(id));
+    if (!producto) {
+        return res.status(404).json({ message: "Producto no encontrado" });
+    }
+
+    producto.stock_actual = Math.max(0, parseInt(stock) || 0);
+    writeDB(db);
+
+    res.json({ success: true, inventario: db.inventario });
 });
 
 // INICIALIZACIÓN DEL SERVIDOR 
