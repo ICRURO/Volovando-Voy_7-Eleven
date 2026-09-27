@@ -1,8 +1,10 @@
 document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("registroForm");
+    const nombre = document.getElementById("nombre");
     const email = document.getElementById("email");
     const password = document.getElementById("password");
     const confirmPassword = document.getElementById("confirmPassword");
+    const btnRegistrar = document.getElementById("btnRegistrar");
     const mensajeError = document.getElementById("mensajeError");
     const mensajeExito = document.getElementById("mensajeExito");
 
@@ -13,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
         mensajeExito.style.display = "none";
     };
 
-    form.addEventListener("submit", (e) => {
+    form.addEventListener("submit", async (e) => {
         e.preventDefault();
         limpiarMensajes();
 
@@ -31,19 +33,41 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        const datosRegistro = {
-            email: email.value.trim(),
-            password: password.value
-        };
+        btnRegistrar.disabled = true;
+        btnRegistrar.textContent = "REGISTRANDO...";
 
-        console.log("Datos listos para enviar:", datosRegistro);
+        try {
+            const respuesta = await fetch('/api/auth/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    nombre: nombre ? nombre.value.trim() : 'Cliente Nuevo',
+                    correo: email.value.trim(),
+                    password: password.value
+                })
+            });
 
-        // Notificación de éxito y redirección a log_in.html
-        mensajeExito.textContent = "¡Cuenta creada con éxito! Redirigiendo...";
-        mensajeExito.style.display = "block";
+            const data = await respuesta.json();
 
-        setTimeout(() => {
-            window.location.href = "log_in.html";
-        }, 1200);
+            if (respuesta.ok) {
+                mensajeExito.textContent = "¡Cuenta creada con éxito! Redirigiendo...";
+                mensajeExito.style.display = "block";
+                form.reset();
+
+                setTimeout(() => {
+                    window.location.href = "log_in.html";
+                }, 1500);
+            } else {
+                mensajeError.textContent = data.message || "Error al registrar la cuenta.";
+                mensajeError.style.display = "block";
+            }
+        } catch (error) {
+            console.error("Error al registrar:", error);
+            mensajeError.textContent = "No se pudo conectar con el servidor.";
+            mensajeError.style.display = "block";
+        } finally {
+            btnRegistrar.disabled = false;
+            btnRegistrar.textContent = "REGISTRARME Y COMENZAR";
+        }
     });
 });

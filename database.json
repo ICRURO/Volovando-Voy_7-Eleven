@@ -7,7 +7,7 @@
       "password": "123",
       "rol": "admin",
       "sucursal": "Xalapa Centro",
-      "estatus": "desactivado"
+      "estatus": "activo"
     },
     {
       "id": "EMP-002",

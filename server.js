@@ -20,6 +20,10 @@ app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, 'src', 'modules', 'auth', 'log_in.html'));
 });
 
+app.get('/recover', (req, res) => {
+    res.sendFile(path.join(__dirname, 'src', 'modules', 'auth', 'recover_password.html'));
+});
+
 app.get('/signin', (req, res) => {
     res.sendFile(path.join(__dirname, 'src', 'modules', 'auth', 'sign_in.html'));
 });
@@ -81,6 +85,80 @@ app.post('/api/auth/login', (req, res) => {
     };
 
     return res.json({ message: "Login exitoso", usuario: usuarioSesionActiva });
+});
+
+// ENDPOINT PARA REGISTRAR NUEVO CLIENTE
+app.post('/api/auth/register', (req, res) => {
+    const { nombre, correo, password } = req.body;
+    const db = readDB();
+
+    if (!db.usuarios) db.usuarios = [];
+
+    const correoLimpio = (correo || '').trim().toLowerCase();
+
+    // Validar si el correo ya existe
+    const usuarioExistente = db.usuarios.find(u => {
+        const correoBD = (u.correo || u.email || '').trim().toLowerCase();
+        return correoBD === correoLimpio;
+    });
+
+    if (usuarioExistente) {
+        return res.status(400).json({ message: "Este correo ya se encuentra registrado." });
+    }
+
+    // Generar un ID único para cliente (ej. CLI-1002)
+    const nuevoId = `CLI-${1000 + db.usuarios.length + 1}`;
+
+    const nuevoUsuario = {
+        id: nuevoId,
+        nombre: nombre || "Cliente",
+        correo: correoLimpio,
+        password: password,
+        rol: "cliente",
+        saldo_cashback: 0,
+        estatus: "activo"
+    };
+
+    db.usuarios.push(nuevoUsuario);
+    writeDB(db);
+
+    return res.json({ success: true, message: "Registro exitoso.", usuario: nuevoUsuario });
+});
+
+// RECUPERAR CONTRASEÑA
+app.post('/api/auth/reset-password', (req, res) => {
+    const { correo, email, nuevaPassword } = req.body;
+    const db = readDB();
+
+    if (!db.usuarios) db.usuarios = [];
+
+    const correoEntrante = (correo || email || '').trim().toLowerCase();
+
+    if (!correoEntrante || !nuevaPassword) {
+        return res.status(400).json({ message: "El correo y la nueva contraseña son obligatorios." });
+    }
+
+    // Busca si el usuario existe en database.json
+    const usuario = db.usuarios.find(u => {
+        const correoBD = (u.correo || u.email || '').trim().toLowerCase();
+        return correoBD === correoEntrante;
+    });
+
+    if (!usuario) {
+        return res.status(404).json({ message: "No existe ninguna cuenta con este correo." });
+    }
+
+    // Si la cuenta está desactivada, no le deja cambiarla
+    const estatusLimpio = (usuario.estatus || '').toLowerCase();
+    if (estatusLimpio === 'desactivado' || estatusLimpio === 'inactivo' || usuario.activo === false) {
+        return res.status(403).json({ message: "Tu cuenta está desactivada. Contacta al administrador." });
+    }
+
+    // Cambia la contraseña vieja por la nueva y guarda en database.json
+    usuario.password = nuevaPassword;
+    writeDB(db);
+
+    return res.json({ message: "¡Contraseña actualizada exitosamente! Redirigiendo..." });
 });
 
 
