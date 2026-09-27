@@ -53,10 +53,8 @@ app.post('/api/auth/login', (req, res) => {
 
     if (!db.usuarios) db.usuarios = [];
 
-    // Lee el correo enviado sin importar si llegó en 'correo' o en 'email'
     const correoEntrante = (correo || email || '').trim().toLowerCase();
 
-    // Busca coincidencia en la BD ignorando espacios y mayúsculas
     const usuario = db.usuarios.find(u => {
         const correoBD = (u.correo || u.email || '').trim().toLowerCase();
         return correoBD === correoEntrante;
@@ -70,13 +68,11 @@ app.post('/api/auth/login', (req, res) => {
         return res.status(401).json({ message: "Contraseña incorrecta." });
     }
 
-    // Valida 'desactivado' e 'inactivo'
     const estatusLimpio = (usuario.estatus || '').toLowerCase();
     if (estatusLimpio === 'desactivado' || estatusLimpio === 'inactivo' || usuario.activo === false) {
         return res.status(403).json({ message: "Tu cuenta está inactiva o desactivada. Contacta al administrador." });
     }
 
-    
     usuarioSesionActiva = {
         id_empleado: usuario.id,
         nombre: usuario.nombre,
@@ -94,9 +90,6 @@ app.get('/api/auth/session', (req, res) => {
     }
     res.json(usuarioSesionActiva);
 });
-
-
-
 
 // INVENTARIO
 app.get('/api/inventory', (req, res) => {
@@ -274,6 +267,158 @@ app.get('/api/turnos/historial', (req, res) => {
     });
 
     res.json(resultado);
+});
+
+// ENDPOINT PARA REGISTRAR Y GUARDAR VENTAS EN EL JSON
+app.post('/api/ventas/registrar', (req, res) => {
+    const nuevaVenta = req.body;
+    const db = readDB();
+
+    if (!db.ventas) {
+        db.ventas = [];
+    }
+
+    db.ventas.push(nuevaVenta);
+    writeDB(db);
+
+    res.json({ success: true, message: "Venta guardada correctamente", venta: nuevaVenta });
+});
+
+// ENDPOINTS PARA LOS REPORTES
+app.get('/api/reports/:type', (req, res) => {
+    const { type } = req.params;
+    const db = readDB();
+    let rows = [];
+
+    const ventas = db.ventas || [];
+    const usuarios = db.usuarios || [];
+    const inventario = db.inventory || db.inventario || [];
+    const turnos = db.turnos || [];
+
+    switch (type) {
+        case 'sales-period':
+            rows = ventas.map(v => [
+                v.id_venta || v.id || 'N/D',
+                v.fecha ? new Date(v.fecha).toLocaleString() : 'N/D',
+                `$${(parseFloat(v.total) || 0).toFixed(2)}`
+            ]);
+            break;
+
+        case 'sales-employee':
+            {
+                const empleadoMap = {};
+                ventas.forEach(v => {
+                    const empId = v.id_empleado || 'Desconocido';
+                    if (!empleadoMap[empId]) {
+                        const userObj = usuarios.find(u => u.id === empId);
+                        empleadoMap[empId] = {
+                            nombre: userObj ? userObj.nombre : empId,
+                            cantidad: 0,
+                            total: 0
+                        };
+                    }
+                    empleadoMap[empId].cantidad += 1;
+                    empleadoMap[empId].total += parseFloat(v.total) || 0;
+                });
+
+                rows = Object.values(empleadoMap).map(e => [
+                    e.nombre,
+                    e.cantidad.toString(),
+                    `$${e.total.toFixed(2)}`
+                ]);
+            }
+            break;
+
+        case 'top-products':
+            {
+                const prodMap = {};
+                ventas.forEach(v => {
+                    const items = v.items || v.productos || [];
+                    items.forEach(item => {
+                        const nombreProd = item.nombre || item.titulo || item.id || 'Producto';
+                        const cantidad = parseInt(item.cantidad) || 1;
+                        const subtotal = parseFloat(item.subtotal || (item.precio_venta * cantidad)) || 0;
+
+                        if (!prodMap[nombreProd]) {
+                            prodMap[nombreProd] = { unidades: 0, ingresos: 0 };
+                        }
+                        prodMap[nombreProd].unidades += cantidad;
+                        prodMap[nombreProd].ingresos += subtotal;
+                    });
+                });
+
+                rows = Object.entries(prodMap).map(([prod, data]) => [
+                    prod,
+                    data.unidades.toString(),
+                    `$${data.ingresos.toFixed(2)}`
+                ]);
+            }
+            break;
+
+        case 'inventory-shrinks':
+            {
+                const mermas = db.mermas || [];
+                rows = mermas.map(m => [
+                    m.id || 'N/D',
+                    m.nombre || m.descripcion || 'Sin nombre',
+                    String(m.cantidad_baja || m.cantidad || '1'),
+                    m.motivo || 'Merma / Caducidad',
+                    m.fecha ? new Date(m.fecha).toLocaleDateString() : 'N/D'
+                ]);
+            }
+            break;
+
+        case 'cashback':
+            {
+                const clientes = db.clientes || [];
+                rows = clientes.map(c => [
+                    c.nombre || c.id || 'Cliente',
+                    `$${(parseFloat(c.cashback_otorgado || c.cashback || 0)).toFixed(2)}`,
+                    `$${(parseFloat(c.cashback_redimido || 0)).toFixed(2)}`,
+                    `$${(parseFloat(c.cashback_actual || c.cashback || 0)).toFixed(2)}`
+                ]);
+            }
+            break;
+
+        case 'attendance':
+            rows = turnos.map(t => {
+                const userObj = usuarios.find(u => u.id === t.id_empleado);
+                return [
+                    userObj ? userObj.nombre : (t.id_empleado || 'N/D'),
+                    t.fecha_inicio ? new Date(t.fecha_inicio).toLocaleDateString() : 'N/D',
+                    t.fecha_inicio ? new Date(t.fecha_inicio).toLocaleTimeString() : 'N/D',
+                    t.fecha_fin ? new Date(t.fecha_fin).toLocaleTimeString() : 'En turno',
+                    t.estatus || 'Completado'
+                ];
+            });
+            break;
+
+        case 'payment-methods':
+            {
+                const metodoMap = {};
+                ventas.forEach(v => {
+                    const metodo = v.metodo_pago || 'Efectivo';
+                    if (!metodoMap[metodo]) {
+                        metodoMap[metodo] = { transacciones: 0, monto: 0 };
+                    }
+                    metodoMap[metodo].transacciones += 1;
+                    metodoMap[metodo].monto += parseFloat(v.total) || 0;
+                });
+
+                rows = Object.entries(metodoMap).map(([metodo, data]) => [
+                    metodo.toUpperCase(),
+                    data.transacciones.toString(),
+                    `$${data.monto.toFixed(2)}`
+                ]);
+            }
+            break;
+
+        default:
+            rows = [];
+            break;
+    }
+
+    res.json({ rows });
 });
 
 // INICIALIZACIÓN DEL SERVIDOR 

@@ -159,6 +159,85 @@
           "precio_unitario": 18
         }
       ]
+    },
+    {
+      "id_venta": "V-1790532489063",
+      "fecha": "2026-09-27T18:08:09.063Z",
+      "id_empleado": "EMP-001",
+      "id_cliente": "CLI-GENERAL",
+      "metodo_pago": "efectivo",
+      "tipo_venta": "Mostrador",
+      "total": 100.8,
+      "items": [
+        {
+          "id": "VOL-AT",
+          "nombre": "Volován de Atún",
+          "categoria": "Clásicos",
+          "precio_venta": 28,
+          "stock_actual": 14,
+          "umbral_minimo": 8,
+          "imagen": "../../../assets/volovan.png",
+          "lotes": [
+            {
+              "id_lote": "L-1003",
+              "cantidad": 14,
+              "fecha_ingreso": "2026-09-17T08:00:00Z",
+              "fecha_caducidad": "2026-09-21T23:59:59Z",
+              "proveedor": "Cocina Central"
+            }
+          ],
+          "cantidad": 4
+        }
+      ]
+    },
+    {
+      "id_venta": "V-1790532606533",
+      "fecha": "2026-09-27T18:10:06.533Z",
+      "id_empleado": "EMP-001",
+      "id_cliente": "CLI-GENERAL",
+      "metodo_pago": "efectivo",
+      "tipo_venta": "Mostrador",
+      "total": 180,
+      "items": [
+        {
+          "id": "VOL-PO",
+          "nombre": "Volován de Pollo",
+          "categoria": "Clásicos",
+          "precio_venta": 25,
+          "stock_actual": 8,
+          "umbral_minimo": 10,
+          "imagen": "../../../assets/volovan.png",
+          "lotes": [
+            {
+              "id_lote": "L-1002",
+              "cantidad": 8,
+              "fecha_ingreso": "2026-09-16T08:00:00Z",
+              "fecha_caducidad": "2026-09-19T23:59:59Z",
+              "proveedor": "Cocina Central"
+            }
+          ],
+          "cantidad": 2
+        },
+        {
+          "id": "VOL-JQ",
+          "nombre": "Volován de Jamón y Queso",
+          "categoria": "Clásicos",
+          "precio_venta": 25,
+          "stock_actual": 35,
+          "umbral_minimo": 10,
+          "imagen": "../../../assets/volovan.png",
+          "lotes": [
+            {
+              "id_lote": "L-1001",
+              "cantidad": 35,
+              "fecha_ingreso": "2026-09-17T08:00:00Z",
+              "fecha_caducidad": "2026-09-20T23:59:59Z",
+              "proveedor": "Cocina Central"
+            }
+          ],
+          "cantidad": 6
+        }
+      ]
     }
   ],
   "turnos": [
@@ -177,12 +256,12 @@
       "id_turno": "T-002",
       "id_empleado": "EMP-004",
       "fecha_inicio": "2026-09-21T08:56:13.613Z",
-      "fecha_fin": null,
+      "fecha_fin": "2026-09-27T18:08:50.267Z",
       "fondo_caja_inicial": 1000,
       "ventas_efectivo_sistema": 0,
-      "efectivo_cierre_real": null,
-      "diferencia": null,
-      "estatus": "abierto"
+      "efectivo_cierre_real": 500,
+      "diferencia": -500,
+      "estatus": "cerrado"
     },
     {
       "id_turno": "T-003",
@@ -214,6 +293,17 @@
       "fondo_caja_inicial": 1,
       "ventas_efectivo_sistema": 0,
       "efectivo_cierre_real": 1,
+      "diferencia": 0,
+      "estatus": "cerrado"
+    },
+    {
+      "id_turno": "T-006",
+      "id_empleado": "EMP-004",
+      "fecha_inicio": "2026-09-27T18:09:16.458Z",
+      "fecha_fin": "2026-09-27T18:14:22.247Z",
+      "fondo_caja_inicial": 1000,
+      "ventas_efectivo_sistema": 0,
+      "efectivo_cierre_real": 1000,
       "diferencia": 0,
       "estatus": "cerrado"
     }

@@ -11,18 +11,12 @@ const catalogGrid = document.getElementById("product-grid");
 const ticketItems = document.getElementById("ticket-items");
 const subtotalLabel = document.getElementById("subtotal");
 const totalLabel = document.getElementById("total");
-const searchProduct = document.getElementById("search");
-const searchClient = document.getElementById("client-search");
-const clientInfo = document.getElementById("client-name");
-const btnCheckout = document.getElementById("btn-pay");
-const ckMetodoPago = document.getElementsByName("metodo-pago");
 const searchInput = document.getElementById("search");
 const promoInfo = document.getElementById("promo-info");
 
 // Cargar Base de Datos Real
 async function cargarBD() {
     try {
-        // En un servidor real se pide a una API. Aquí leemos el JSON local.
         const response = await fetch('../../../database.json');
         const db = await response.json();
         
@@ -97,7 +91,6 @@ function renderTicket() {
         </div>`;
     }).join("");
 
-    // H27: Lógica de Promociones (Ejemplo: Compra 3 productos y obtén 10% de descuento)
     let descuento = 0;
     if (totalItems >= 3) {
         descuento = subtotal * 0.10;
@@ -111,11 +104,6 @@ function renderTicket() {
     totalLabel.textContent = `$${totalFinal.toFixed(2)}`;
 }
 
-searchClient.addEventListener('input', (e) => {
-  const query = e.target.value.trim().toUpperCase();
-  clienteActual = null;
-  clientInfo.textContent = query ? "-- No encontrado --" : "-- Sin cliente asociado --";
-});
 // Búsqueda de Cliente
 document.getElementById("client-search").addEventListener("input", (e) => {
     const query = e.target.value.trim().toLowerCase();
@@ -133,42 +121,17 @@ document.querySelectorAll('input[name="tipo-venta"]').forEach(radio => {
 
 // H29: Cancelación con autorización
 document.getElementById("btn-cancel").addEventListener("click", () => {
-    // Si el carrito está vacío, avisar al usuario en lugar de ignorar el clic
     if (carrito.length === 0) {
         alert("No hay productos en el ticket para cancelar.");
         return;
     }
-})
 
-btnCheckout.addEventListener("click", () => {
-  if (carrito.length === 0) {
-    alert("El ticket está vacío.");
-    return;
-  }
-  const tipoVenta = document.querySelector('input[name="tipo-venta"]:checked').value;
-  const tipoPago = [];
-  var metodosPago = Array.from(document.querySelectorAll('input[name="metodo-pago"]:checked')).map(function(metodopago){
-    return metodopago.value;
-  });
-  metodosPago.forEach(element => {
-    tipoPago.push(element);
-  });
-  
-  alert(`Venta completada con éxito.\nTipo: ${tipoVenta}\nCliente: ${clienteActual ? clienteActual.nombre : "Mostrador general"}\nMétodo de pago: ${tipoPago}`);
-  
-  carrito = [];
-  renderTicket();
-    // Pedir contraseña de admin (Maria de Lourdes = 123)
     const pin = prompt("Requiere PIN de Administrador para anular ticket (Usa la clave: 123):");
-    
-    // Si el usuario cancela la ventana del prompt
     if (pin === null) return; 
 
-    // Buscar si la clave coincide con un admin en la BD
     const supervisor = usuariosBD.find(u => u.rol === 'admin' && String(u.password) === String(pin));
     
     if (supervisor) {
-        // Limpiar todo el estado de la venta
         carrito = [];
         document.getElementById("dom-direccion").value = "";
         document.getElementById("dom-ref").value = "";
@@ -182,8 +145,8 @@ btnCheckout.addEventListener("click", () => {
     }
 });
 
-// H14: Generar Comprobante de Venta
-document.getElementById("btn-pay").addEventListener("click", () => {
+// H14: Generar Comprobante de Venta y Registro en Servidor
+document.getElementById("btn-pay").addEventListener("click", async () => {
     if (carrito.length === 0) {
         alert("El ticket está vacío.");
         return;
@@ -195,6 +158,28 @@ document.getElementById("btn-pay").addEventListener("click", () => {
         const dir = document.getElementById("dom-direccion").value;
         if(!dir) return alert("Por favor, ingrese la dirección de entrega.");
         datosEntrega = `<br>Entrega a: ${dir}`;
+    }
+
+    // Estructura de la venta para enviarla y guardarla en el servidor (Base de datos / database.json)
+    const nuevaVenta = {
+        id_venta: `V-${Date.now()}`,
+        fecha: new Date().toISOString(),
+        id_empleado: empleadoEnTurno ? empleadoEnTurno.id : 'EMP-001',
+        id_cliente: clienteActual ? clienteActual.id : 'CLI-GENERAL',
+        metodo_pago: 'efectivo',
+        tipo_venta: tipoVenta,
+        total: parseFloat(totalLabel.textContent.replace('$', '')) || 0,
+        items: carrito
+    };
+
+    try {
+        await fetch('/api/ventas/registrar', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(nuevaVenta)
+        });
+    } catch (error) {
+        console.error("Error al registrar venta en servidor:", error);
     }
 
     const receiptBody = document.getElementById("receipt-body");
