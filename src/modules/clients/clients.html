@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Volovando Voy - Mi Cashback</title>
+    <!-- Reutilizamos estilos existentes para mantener consistencia -->
+    <link rel="stylesheet" href="../shifts/shifts_admin.css">
+    <style>
+        body {
+            background-color: #f6f3ed;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .cashback-dashboard {
+            max-width: 950px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .cards-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .balance-card {
+            flex: 1;
+            min-width: 280px;
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            border-left: 6px solid #e68a19;
+        }
+
+        .balance-card.client-info {
+            border-left-color: #9e1d24;
+        }
+
+        .balance-card h3 {
+            font-size: 1rem;
+            color: #555555;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .balance-amount {
+            font-size: 2.4rem;
+            font-weight: 900;
+            color: #e68a19;
+            margin: 6px 0;
+        }
+
+        .balance-desc {
+            font-size: 0.85rem;
+            color: #777777;
+        }
+
+        /* Alerta de caducidad (HU-32) */
+        .alert-caducidad {
+            display: none;
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+            border-left: 5px solid #ffc107;
+            padding: 14px 18px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+        }
+
+        /* Barra de búsqueda / selección */
+        .search-box-client {
+            background: #ffffff;
+            padding: 16px 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .search-box-client input {
+            flex: 1;
+            max-width: 380px;
+            padding: 9px 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 0.95rem;
+        }
+
+        .btn-consultar {
+            background-color: #9e1d24;
+            color: white;
+            border: none;
+            padding: 9px 18px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn-consultar:hover {
+            background-color: #80161c;
+        }
+
+        /* Tabla de historial (HU-33) */
+        .table-container {
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .table-container h2 {
+            font-size: 1.25rem;
+            margin-bottom: 15px;
+            color: #222;
+        }
+
+        .cb-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .cb-table th, .cb-table td {
+            padding: 12px 14px;
+            text-align: left;
+            border-bottom: 1px solid #eeeeee;
+            font-size: 0.9rem;
+        }
+
+        .cb-table th {
+            background-color: #9e1d24;
+            color: white;
+            font-weight: 700;
+        }
+
+        .badge-plus {
+            color: #2e7d32;
+            font-weight: bold;
+        }
+
+        .badge-minus {
+            color: #c62828;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Menú lateral izquierdo (se oculta automáticamente dentro del dashboard) -->
+    <aside class="sidebar" id="moduloSidebar">
+        <div class="brand-title">VOLOVANDO<br>VOY</div>
+        <img src="../../../assets/volovino.png" alt="Mascota Volován" class="sidebar-logo">
+        <nav class="nav-menu">
+            <a href="/login">INICIAR SESIÓN</a>
+            <a href="/signin">CREAR CUENTA</a>
+            <a href="/clients" class="active">MI CASHBACK</a>
+            <a href="/shifts/empleado">TURNOS</a>
+        </nav>
+    </aside>
+
+    <!-- Área principal de contenido -->
+    <main class="main-content" style="padding: 30px; flex: 1; overflow-y: auto;">
+        <div class="cashback-dashboard">
+
+            <!-- Buscador para consultar cualquier cliente (o el propio) -->
+            <div class="search-box-client">
+                <label for="clienteQuery"><strong>Consultar Cliente:</strong></label>
+                <input type="text" id="clienteQuery" placeholder="Ingresa ID (ej. CLI-1001) o correo..." value="CLI-1001">
+                <button type="button" id="btnBuscar" class="btn-consultar">Buscar</button>
+            </div>
+
+            <!-- HU-32: Mensaje de alerta por caducidad -->
+            <div id="alertaVencimiento" class="alert-caducidad">
+                ⚠️ <strong>¡Aviso de Vigencia!</strong> Tienes <span id="montoAlerta" style="font-weight:bold;">$0.00</span> de cashback que caducará el próximo <span id="fechaAlerta" style="font-weight:bold;">--</span>. ¡Aprovecha para canjearlo en tu próxima compra de volovanes!
+            </div>
+
+            <!-- Tarjetas de Saldo y Datos -->
+            <div class="cards-row">
+                <div class="balance-card">
+                    <h3>Saldo Disponible de Cashback</h3>
+                    <div class="balance-amount" id="txtSaldo">$0.00</div>
+                    <div class="balance-desc">Equivalente a pesos mexicanos disponible para pagar en mostrador.</div>
+                </div>
+
+                <div class="balance-card client-info">
+                    <h3 id="txtNombreCliente">Cliente</h3>
+                    <p style="margin: 8px 0;"><strong>ID Cliente:</strong> <span id="txtIdCliente" style="color: #9e1d24; font-weight: bold;">--</span></p>
+                    <p style="margin: 8px 0;"><strong>Correo:</strong> <span id="txtCorreoCliente">--</span></p>
+                    <p style="margin: 8px 0;"><strong>Estatus de cuenta:</strong> <span id="txtEstatus" style="color: #2e7d32; font-weight: bold;">Activo</span></p>
+                </div>
+            </div>
+
+            <!-- HU-33: Historial detallado de movimientos -->
+            <div class="table-container">
+                <h2>Historial de Movimientos de Cashback</h2>
+                <table class="cb-table">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Tipo de Movimiento</th>
+                            <th>Ticket / Referencia</th>
+                            <th>Monto</th>
+                            <th>Fecha Caducidad</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaHistorial">
+                        <tr>
+                            <td colspan="5" style="text-align: center; color: #888;">Cargando historial...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        // Ocultar sidebar interno si la pantalla está montada dentro del iframe del dashboard
+        if (window.self !== window.top) {
+            const side = document.getElementById('moduloSidebar');
+            if (side) side.style.display = 'none';
+        }
+    </script>
+    <script src="clients.js"></script>
+</body>
+</html>

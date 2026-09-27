@@ -62,6 +62,15 @@
       "rol": "cliente",
       "saldo_cashback": 0,
       "estatus": "activo"
+    },
+    {
+      "id": "CLI-1008",
+      "nombre": "Carlos Ruiz",
+      "correo": "carlos@correo.com",
+      "password": "123456789",
+      "rol": "cliente",
+      "saldo_cashback": 2.5,
+      "estatus": "activo"
     }
   ],
   "inventario": [
@@ -70,7 +79,7 @@
       "nombre": "Volován de Jamón y Queso",
       "categoria": "Clásicos",
       "precio_venta": 25,
-      "stock_actual": 35,
+      "stock_actual": 31,
       "umbral_minimo": 10,
       "imagen": "../../../assets/volovan.png",
       "lotes": [
@@ -238,6 +247,72 @@
           "cantidad": 6
         }
       ]
+    },
+    {
+      "id_venta": "V-1790549946763",
+      "fecha": "2026-09-27T22:59:06.763Z",
+      "id_empleado": "EMP-001",
+      "id_cliente": "CLI-GENERAL",
+      "metodo_pago": "efectivo",
+      "cashback_usado": 0,
+      "tipo_venta": "Mostrador",
+      "total": 50,
+      "items": [
+        {
+          "id": "VOL-JQ",
+          "nombre": "Volován de Jamón y Queso",
+          "categoria": "Clásicos",
+          "precio_venta": 25,
+          "stock_actual": 35,
+          "umbral_minimo": 10,
+          "imagen": "../../../assets/volovan.png",
+          "lotes": [
+            {
+              "id_lote": "L-1001",
+              "cantidad": 35,
+              "fecha_ingreso": "2026-09-17T08:00:00Z",
+              "fecha_caducidad": "2026-09-20T23:59:59Z",
+              "proveedor": "Cocina Central"
+            }
+          ],
+          "cantidad": 2
+        }
+      ],
+      "cashback_generado": 0,
+      "cashback_redimido": 0
+    },
+    {
+      "id_venta": "V-1790550132164",
+      "fecha": "2026-09-27T23:02:12.164Z",
+      "id_empleado": "EMP-001",
+      "id_cliente": "CLI-1008",
+      "metodo_pago": "efectivo",
+      "cashback_usado": 0,
+      "tipo_venta": "Mostrador",
+      "total": 50,
+      "items": [
+        {
+          "id": "VOL-JQ",
+          "nombre": "Volován de Jamón y Queso",
+          "categoria": "Clásicos",
+          "precio_venta": 25,
+          "stock_actual": 33,
+          "umbral_minimo": 10,
+          "imagen": "../../../assets/volovan.png",
+          "lotes": [
+            {
+              "id_lote": "L-1001",
+              "cantidad": 35,
+              "fecha_ingreso": "2026-09-17T08:00:00Z",
+              "fecha_caducidad": "2026-09-20T23:59:59Z",
+              "proveedor": "Cocina Central"
+            }
+          ],
+          "cantidad": 2
+        }
+      ],
+      "cashback_generado": 2.5,
+      "cashback_redimido": 0
     }
   ],
   "turnos": [
@@ -313,5 +388,32 @@
     "hora_apertura": "07:30",
     "hora_cierre": "21:00",
     "tolerancia_minutos": 12
-  }
+  },
+  "cashback_config": {
+    "porcentaje": 5,
+    "dias_vigencia": 30,
+    "dias_aviso_caducidad": 7
+  },
+  "movimientos_cashback": [
+    {
+      "id_movimiento": "CB-1001",
+      "id_cliente": "CLI-1001",
+      "id_venta": "TK-0001",
+      "tipo": "acreditacion",
+      "monto": 2.15,
+      "fecha": "2026-09-18T10:30:00Z",
+      "fecha_caducidad": "2026-10-18T10:30:00Z",
+      "estatus": "vigente"
+    },
+    {
+      "id_movimiento": "CB-ACR-1790550132169",
+      "id_cliente": "CLI-1008",
+      "id_venta": "V-1790550132164",
+      "tipo": "acreditacion",
+      "monto": 2.5,
+      "fecha": "2026-09-27T23:02:12.169Z",
+      "fecha_caducidad": "2026-10-27T23:02:12.169Z",
+      "estatus": "vigente"
+    }
+  ]
 }

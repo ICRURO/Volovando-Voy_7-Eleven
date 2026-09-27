@@ -1,3 +1,7 @@
+// ==========================================
+// PUNTO DE VENTA (POS) - VOLOVANDO VOY
+// ==========================================
+
 // Variables de estado
 let inventarioBD = [];
 let usuariosBD = [];
@@ -23,10 +27,11 @@ async function cargarBD() {
         inventarioBD = db.inventario || [];
         usuariosBD = db.usuarios || [];
 
-        // H30: Simulamos empleado logueado obteniendo el primer admin/cajero de la BD
-        empleadoEnTurno = usuariosBD.find(u => u.rol === 'admin' || u.rol === 'cajero');
+        // H30: Identificar al cajero/empleado en turno
+        empleadoEnTurno = usuariosBD.find(u => u.rol === 'admin' || u.rol === 'empleado' || u.rol === 'cajero');
         if (empleadoEnTurno) {
-            document.getElementById("empleado-info").innerText = `Cajero: ${empleadoEnTurno.nombre}`;
+            const empInfo = document.getElementById("empleado-info");
+            if (empInfo) empInfo.innerText = `Cajero: ${empleadoEnTurno.nombre}`;
         }
 
         renderCatalogo();
@@ -38,12 +43,14 @@ async function cargarBD() {
 
 // Renderizar Catálogo
 function renderCatalogo() {
-    const query = searchInput.value.toLowerCase();
+    const query = searchInput ? searchInput.value.toLowerCase() : "";
     const filtrados = inventarioBD.filter(p => {
         const matchCat = categoriaActiva === "Todos" || p.categoria === categoriaActiva;
         const matchSearch = p.nombre.toLowerCase().includes(query);
         return matchCat && matchSearch;
     });
+
+    if (!catalogGrid) return;
 
     catalogGrid.innerHTML = filtrados.map(p => `
         <div class="product-card" onclick="agregarAlTicket('${p.id}')">
@@ -85,7 +92,7 @@ function renderTicket() {
         subtotal += item.precio_venta * item.cantidad;
         totalItems += item.cantidad;
         return `
-        <div class="ticket-item">
+        <div class="ticket-item" style="display:flex; justify-content:space-between; margin-bottom:5px;">
             <span>${item.cantidad}x ${item.nombre}</span>
             <span>$${(item.precio_venta * item.cantidad).toFixed(2)}</span>
         </div>`;
@@ -104,109 +111,223 @@ function renderTicket() {
     totalLabel.textContent = `$${totalFinal.toFixed(2)}`;
 }
 
-// Búsqueda de Cliente
-document.getElementById("client-search").addEventListener("input", (e) => {
-    const query = e.target.value.trim().toLowerCase();
-    clienteActual = usuariosBD.find(u => u.rol === 'cliente' && (u.id.toLowerCase() === query || u.correo.includes(query)));
-    
-    document.getElementById("client-name").textContent = clienteActual ? clienteActual.nombre : "Público General";
-});
+// Búsqueda de Cliente con Saldo de Cashback (HU-3 / HU-18)
+const clientSearchInput = document.getElementById("client-search");
+if (clientSearchInput) {
+    clientSearchInput.addEventListener("input", (e) => {
+        const query = e.target.value.trim().toLowerCase();
+        
+        if (!query) {
+            clienteActual = null;
+            document.getElementById("client-name").textContent = "Público General";
+            return;
+        }
 
-// H12 y H28: Mostrar campos de domicilio
+        clienteActual = usuariosBD.find(u => 
+            u.rol === 'cliente' && 
+            ((u.id && u.id.toLowerCase() === query) || (u.correo && u.correo.toLowerCase().includes(query)))
+        );
+        
+        if (clienteActual) {
+            const saldo = parseFloat(clienteActual.saldo_cashback) || 0;
+            document.getElementById("client-name").innerHTML = `<strong>${clienteActual.nombre}</strong> <span style="color:#e68a19; font-weight:bold;">(Saldo CB: $${saldo.toFixed(2)})</span>`;
+        } else {
+            document.getElementById("client-name").textContent = "Público General";
+        }
+    });
+}
+
+// H12 y H28: Mostrar u ocultar campos de entrega a domicilio
 document.querySelectorAll('input[name="tipo-venta"]').forEach(radio => {
     radio.addEventListener('change', (e) => {
-        document.getElementById('domicilio-fields').style.display = e.target.value === 'Domicilio' ? 'block' : 'none';
+        const fields = document.getElementById('domicilio-fields');
+        if (fields) fields.style.display = e.target.value === 'Domicilio' ? 'block' : 'none';
     });
 });
 
-// H29: Cancelación con autorización
-document.getElementById("btn-cancel").addEventListener("click", () => {
-    if (carrito.length === 0) {
-        alert("No hay productos en el ticket para cancelar.");
-        return;
-    }
+// H29: Cancelación con autorización de PIN de Administrador
+const btnCancel = document.getElementById("btn-cancel");
+if (btnCancel) {
+    btnCancel.addEventListener("click", () => {
+        if (carrito.length === 0) {
+            alert("No hay productos en el ticket para cancelar.");
+            return;
+        }
 
-    const pin = prompt("Requiere PIN de Administrador para anular ticket (Usa la clave: 123):");
-    if (pin === null) return; 
+        const pin = prompt("Requiere PIN de Administrador para anular ticket (Usa la clave: 123):");
+        if (pin === null) return; 
 
-    const supervisor = usuariosBD.find(u => u.rol === 'admin' && String(u.password) === String(pin));
-    
-    if (supervisor) {
-        carrito = [];
-        document.getElementById("dom-direccion").value = "";
-        document.getElementById("dom-ref").value = "";
-        document.querySelector('input[value="Mostrador"]').checked = true;
-        document.getElementById('domicilio-fields').style.display = 'none';
+        const supervisor = usuariosBD.find(u => u.rol === 'admin' && String(u.password) === String(pin));
         
-        renderTicket();
-        alert(`Ticket cancelado correctamente. Autorizó: ${supervisor.nombre}`);
-    } else {
-        alert("PIN Incorrecto. Acción denegada.");
-    }
-});
+        if (supervisor) {
+            carrito = [];
+            const dir = document.getElementById("dom-direccion");
+            const ref = document.getElementById("dom-ref");
+            if (dir) dir.value = "";
+            if (ref) ref.value = "";
 
-// H14: Generar Comprobante de Venta y Registro en Servidor
-document.getElementById("btn-pay").addEventListener("click", async () => {
-    if (carrito.length === 0) {
-        alert("El ticket está vacío.");
-        return;
-    }
+            const radioMostrador = document.querySelector('input[value="Mostrador"]');
+            if (radioMostrador) radioMostrador.checked = true;
 
-    const tipoVenta = document.querySelector('input[name="tipo-venta"]:checked').value;
-    let datosEntrega = "";
-    if (tipoVenta === 'Domicilio') {
-        const dir = document.getElementById("dom-direccion").value;
-        if(!dir) return alert("Por favor, ingrese la dirección de entrega.");
-        datosEntrega = `<br>Entrega a: ${dir}`;
-    }
-
-    // Estructura de la venta para enviarla y guardarla en el servidor (Base de datos / database.json)
-    const nuevaVenta = {
-        id_venta: `V-${Date.now()}`,
-        fecha: new Date().toISOString(),
-        id_empleado: empleadoEnTurno ? empleadoEnTurno.id : 'EMP-001',
-        id_cliente: clienteActual ? clienteActual.id : 'CLI-GENERAL',
-        metodo_pago: 'efectivo',
-        tipo_venta: tipoVenta,
-        total: parseFloat(totalLabel.textContent.replace('$', '')) || 0,
-        items: carrito
-    };
-
-    try {
-        await fetch('/api/ventas/registrar', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(nuevaVenta)
-        });
-    } catch (error) {
-        console.error("Error al registrar venta en servidor:", error);
-    }
-
-    const receiptBody = document.getElementById("receipt-body");
-    receiptBody.innerHTML = `
-        Fecha: ${new Date().toLocaleString()}<br>
-        Le atendió: ${empleadoEnTurno ? empleadoEnTurno.nombre : 'Cajero'}<br>
-        Cliente: ${clienteActual ? clienteActual.nombre : 'General'}<br>
-        Tipo: ${tipoVenta} ${datosEntrega}<br><br>
-        ${ticketItems.innerHTML}
-        <br><strong>${promoInfo.innerText}</strong>
-        <br><strong>TOTAL PAGADO: ${totalLabel.textContent}</strong>
-    `;
-    
-    document.getElementById("receipt-modal").style.display = "flex";
-});
-
-// Cerrar recibo y reiniciar
-window.cerrarRecibo = function() {
-    document.getElementById("receipt-modal").style.display = "none";
-    carrito = [];
-    document.getElementById("client-search").value = "";
-    document.getElementById("client-name").textContent = "Público General";
-    clienteActual = null;
-    renderTicket();
+            const fields = document.getElementById('domicilio-fields');
+            if (fields) fields.style.display = 'none';
+            
+            renderTicket();
+            alert(`Ticket cancelado correctamente. Autorizó: ${supervisor.nombre}`);
+        } else {
+            alert("PIN Incorrecto. Acción denegada.");
+        }
+    });
 }
 
-// Filtros y Búsqueda
+// H14, H17 y H18: Cobro de Venta con integración de Métodos de Pago y Cashback
+const btnPay = document.getElementById("btn-pay");
+if (btnPay) {
+    btnPay.addEventListener("click", async () => {
+        if (carrito.length === 0) {
+            alert("El ticket está vacío.");
+            return;
+        }
+
+        const radioVenta = document.querySelector('input[name="tipo-venta"]:checked');
+        const tipoVenta = radioVenta ? radioVenta.value : 'Mostrador';
+        let datosEntrega = "";
+
+        if (tipoVenta === 'Domicilio') {
+            const dir = document.getElementById("dom-direccion").value;
+            if (!dir) {
+                alert("Por favor, ingrese la dirección de entrega.");
+                return;
+            }
+            datosEntrega = `<br>Entrega a: ${dir}`;
+        }
+
+        const totalVenta = parseFloat(totalLabel.textContent.replace('$', '')) || 0;
+        const cbInput = document.getElementById("input-cashback");
+        const pagoCashback = cbInput ? (parseFloat(cbInput.value) || 0) : 0;
+
+        // Validaciones HU-18 (Pagar con saldo de cashback)
+        if (pagoCashback > 0) {
+            if (!clienteActual) {
+                alert("Debes asociar un cliente registrado para poder descontar saldo de cashback.");
+                return;
+            }
+
+            const saldoDisponible = parseFloat(clienteActual.saldo_cashback) || 0;
+            if (pagoCashback > saldoDisponible) {
+                alert(`Saldo insuficiente. El cliente solo tiene $${saldoDisponible.toFixed(2)} de cashback.`);
+                return;
+            }
+
+            if (pagoCashback > totalVenta) {
+                alert("El monto de cashback no puede superar el total de la venta.");
+                return;
+            }
+        }
+
+        // Definir el método de pago principal
+        let metodo = 'efectivo';
+        if (pagoCashback > 0) {
+            metodo = (pagoCashback >= totalVenta) ? 'cashback' : 'mixto';
+        }
+
+        const nuevaVenta = {
+            id_venta: `V-${Date.now()}`,
+            fecha: new Date().toISOString(),
+            id_empleado: empleadoEnTurno ? empleadoEnTurno.id : 'EMP-001',
+            id_cliente: clienteActual ? clienteActual.id : 'CLI-GENERAL',
+            metodo_pago: metodo,
+            cashback_usado: pagoCashback,
+            tipo_venta: tipoVenta,
+            total: totalVenta,
+            items: carrito
+        };
+
+        btnPay.disabled = true;
+        btnPay.textContent = "Procesando...";
+
+        let cbGanado = 0;
+        try {
+            // Guardar venta y procesar cashback en el servidor
+            const res = await fetch('/api/ventas/registrar-con-cashback', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(nuevaVenta)
+            });
+
+            const data = await res.json();
+            cbGanado = data.cashback_generado || 0;
+
+            // Actualizar el saldo local del cliente en pantalla si aplica
+            if (clienteActual && data.nuevo_saldo !== undefined) {
+                clienteActual.saldo_cashback = data.nuevo_saldo;
+            }
+
+            // También descontar el stock en el inventario local
+            carrito.forEach(item => {
+                const prod = inventarioBD.find(p => p.id === item.id);
+                if (prod) prod.stock_actual -= item.cantidad;
+            });
+
+        } catch (error) {
+            console.error("Error al registrar la venta:", error);
+            alert("Hubo un problema de conexión al guardar la venta.");
+        } finally {
+            btnPay.disabled = false;
+            btnPay.textContent = "Cobrar";
+        }
+
+        // Descontar inventario en el servidor
+        try {
+            await fetch('/api/inventory/descontar', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ itemsVendidos: carrito })
+            });
+        } catch (e) {
+            console.warn("No se pudo descontar inventario en backend", e);
+        }
+
+        // Mostrar recibo impreso
+        const receiptBody = document.getElementById("receipt-body");
+        if (receiptBody) {
+            receiptBody.innerHTML = `
+                Fecha: ${new Date().toLocaleString()}<br>
+                Le atendió: ${empleadoEnTurno ? empleadoEnTurno.nombre : 'Cajero'}<br>
+                Cliente: ${clienteActual ? clienteActual.nombre : 'Público General'}<br>
+                Tipo: ${tipoVenta} ${datosEntrega}<br><br>
+                ${ticketItems.innerHTML}
+                <br><strong>${promoInfo.innerText}</strong>
+                <br><strong>TOTAL PAGADO: ${totalLabel.textContent}</strong>
+                ${pagoCashback > 0 ? `<br><span style="color:#1565c0; font-weight:bold;">Pagado con Cashback: -$${pagoCashback.toFixed(2)}</span>` : ''}
+                ${cbGanado > 0 ? `<br><span style="color:#2e7d32; font-weight:bold;">¡Cashback ganado hoy!: +$${cbGanado.toFixed(2)}</span>` : ''}
+            `;
+        }
+
+        const receiptModal = document.getElementById("receipt-modal");
+        if (receiptModal) receiptModal.style.display = "flex";
+    });
+}
+
+// Cerrar recibo y reiniciar ticket
+window.cerrarRecibo = function() {
+    const modal = document.getElementById("receipt-modal");
+    if (modal) modal.style.display = "none";
+    
+    carrito = [];
+    if (clientSearchInput) clientSearchInput.value = "";
+    document.getElementById("client-name").textContent = "Público General";
+    clienteActual = null;
+
+    // Limpiar inputs de cobro
+    const cbInput = document.getElementById("input-cashback");
+    if (cbInput) cbInput.value = "";
+    
+    renderTicket();
+    renderCatalogo();
+};
+
+// Filtros de categorías
 document.querySelectorAll(".filter-btn").forEach(btn => {
     btn.addEventListener("click", (e) => {
         document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
@@ -216,7 +337,7 @@ document.querySelectorAll(".filter-btn").forEach(btn => {
     });
 });
 
-searchInput.addEventListener("input", renderCatalogo);
+if (searchInput) searchInput.addEventListener("input", renderCatalogo);
 
-// Inicializar
+// Inicializar la carga al entrar a la página
 cargarBD();

@@ -67,23 +67,67 @@
         </div>
       </div>
       <br>
-      <div>
-        <label><input type="checkbox" name="metodo-pago" value="efectivo"> Efectivo</label>
-        <label><input type="checkbox" name="metodo-pago" value="tarjeta"> Tarjeta</label>
-        <label><input type="checkbox" name="metodo-pago" value="transferencia"> Transferencia</label>
-        <label><input type="checkbox" name="metodo-pago" value="cashback"> Cashback</label>
+
+    <!-- Métodos de Pago estructurados -->
+      <div class="payment-methods-section">
+        <h4 style="margin: 0 0 8px 0; font-size: 0.85rem; color: #444; border-bottom: 1px solid #ebdccc; padding-bottom: 4px;">Métodos de Pago:</h4>
+
+        <div class="payment-grid">
+          <!-- Efectivo -->
+          <div class="payment-row">
+            <label class="pay-label">
+              <input type="checkbox" name="metodo-pago" id="check-efectivo" value="efectivo" checked>
+              <span>Efectivo</span>
+            </label>
+            <div class="input-money-wrapper">
+              <span>$</span>
+              <input type="number" step="0.5" id="input-efectivo" placeholder="0.00" class="pay-input">
+            </div>
+          </div>
+
+          <!-- Tarjeta -->
+          <div class="payment-row">
+            <label class="pay-label">
+              <input type="checkbox" name="metodo-pago" id="check-tarjeta" value="tarjeta">
+              <span>Tarjeta</span>
+            </label>
+            <div class="input-money-wrapper">
+              <span>$</span>
+              <input type="number" step="0.5" id="input-tarjeta" placeholder="0.00" class="pay-input">
+            </div>
+          </div>
+
+          <!-- Transferencia -->
+          <div class="payment-row">
+            <label class="pay-label">
+              <input type="checkbox" name="metodo-pago" id="check-transferencia" value="transferencia">
+              <span>Transf.</span>
+            </label>
+            <div class="input-money-wrapper">
+              <span>$</span>
+              <input type="number" step="0.5" id="input-transferencia" placeholder="0.00" class="pay-input">
+            </div>
+          </div>
+
+          <!-- Cashback -->
+          <div class="payment-row highlight-cb">
+            <label class="pay-label">
+              <input type="checkbox" name="metodo-pago" id="check-cashback" value="cashback">
+              <span style="font-weight: bold; color: #e68a19;">Cashback</span>
+            </label>
+            <div class="input-money-wrapper">
+              <span>$</span>
+              <input type="number" step="0.5" id="input-cashback" placeholder="0.00" class="pay-input">
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top: 8px; font-size: 0.8rem; color: #555;">
+          <label style="cursor: pointer;">
+            <input type="checkbox" name="pago-pendiente" value="pendiente"> ¿Pago pendiente?
+          </label>
+        </div>
       </div>
-      <div>
-        <input type="text" id="input-efectivo" placeholder="0.00">
-        <input type="text" id="input-tarjeta" placeholder="0.00">
-        <input type="text" id="input-transferencia" placeholder="0.00">
-        <input type="text" id="input-cashback" placeholder="0.00">
-      </div>
-      <br>
-      <div>
-        <label><input type="checkbox" name="pago-pendiente" value="pendiente"> ¿Pago pendiente?</label>
-      </div>
-    </aside>
 
       <div style="display: flex; gap: 10px; margin-top: 15px;">
         <button id="btn-pay" class="btn-primary" style="flex: 2;">Cobrar</button>

@@ -36,6 +36,10 @@ app.get('/shifts/admin', (req, res) => {
     res.sendFile(path.join(__dirname, 'src', 'modules', 'shifts', 'shifts_admin.html'));
 });
 
+app.get('/clients', (req, res) => {
+    res.sendFile(path.join(__dirname, 'src', 'modules', 'clients', 'clients.html'));
+});
+
 const dbPath = path.join(__dirname, 'database.json');
 
 function readDB() {
@@ -497,6 +501,137 @@ app.get('/api/reports/:type', (req, res) => {
     }
 
     res.json({ rows });
+});
+
+// ==========================================
+// MÓDULO DE CASHBACK (Historias 16, 17, 18, 31, 32, 33)
+// ==========================================
+
+// HU-16 y HU-31: Obtener y guardar configuración de cashback
+app.get('/api/cashback/config', (req, res) => {
+    const db = readDB();
+    res.json(db.cashback_config || { porcentaje: 5, dias_vigencia: 30, dias_aviso_caducidad: 7 });
+});
+
+app.post('/api/cashback/config', (req, res) => {
+    const { porcentaje, dias_vigencia, dias_aviso_caducidad } = req.body;
+    const db = readDB();
+
+    db.cashback_config = {
+        porcentaje: parseFloat(porcentaje) || 5,
+        dias_vigencia: parseInt(dias_vigencia) || 30,
+        dias_aviso_caducidad: parseInt(dias_aviso_caducidad) || 7
+    };
+
+    writeDB(db);
+    res.json({ success: true, message: "Reglas de cashback actualizadas.", config: db.cashback_config });
+});
+
+// HU-3 y HU-33: Obtener datos de cliente, saldo e historial de cashback
+app.get('/api/cashback/cliente/:id', (req, res) => {
+    const { id } = req.params;
+    const db = readDB();
+
+    const cliente = (db.usuarios || []).find(u => u.id === id || u.correo.toLowerCase() === id.toLowerCase());
+    if (!cliente) {
+        return res.status(404).json({ message: "Cliente no encontrado" });
+    }
+
+    const movimientos = (db.movimientos_cashback || []).filter(m => m.id_cliente === cliente.id);
+    const config = db.cashback_config || { dias_aviso_caducidad: 7 };
+
+    // HU-32: Detectar saldo próximo a caducar
+    const hoy = new Date();
+    const avisoLimite = new Date();
+    avisoLimite.setDate(hoy.getDate() + (config.dias_aviso_caducidad || 7));
+
+    const proximosACaducar = movimientos.filter(m => {
+        if (m.tipo !== 'acreditacion' || m.estatus !== 'vigente' || !m.fecha_caducidad) return false;
+        const cad = new Date(m.fecha_caducidad);
+        return cad > hoy && cad <= avisoLimite;
+    });
+
+    const saldoPorCaducar = proximosACaducar.reduce((acc, curr) => acc + (parseFloat(curr.monto) || 0), 0);
+
+    res.json({
+        cliente: {
+            id: cliente.id,
+            nombre: cliente.nombre,
+            correo: cliente.correo,
+            saldo_cashback: cliente.saldo_cashback || 0
+        },
+        saldoPorCaducar: saldoPorCaducar,
+        fechaLimiteProxima: proximosACaducar.length > 0 ? proximosACaducar[0].fecha_caducidad : null,
+        historial: movimientos.reverse() // Más recientes primero
+    });
+});
+
+// Actualizar endpoint de ventas para procesar Cashback (Acreditación y Redención)
+app.post('/api/ventas/registrar-con-cashback', (req, res) => {
+    const venta = req.body;
+    const db = readDB();
+
+    if (!db.ventas) db.ventas = [];
+    if (!db.movimientos_cashback) db.movimientos_cashback = [];
+    if (!db.usuarios) db.usuarios = [];
+
+    const config = db.cashback_config || { porcentaje: 5, dias_vigencia: 30 };
+    const cliente = db.usuarios.find(u => u.id === venta.id_cliente);
+
+    let cashbackRedimido = parseFloat(venta.cashback_usado) || 0;
+    let cashbackGenerado = 0;
+
+    if (cliente) {
+        // 1. Descontar cashback si pagó con él (HU-18)
+        if (cashbackRedimido > 0) {
+            cliente.saldo_cashback = Math.max(0, (cliente.saldo_cashback || 0) - cashbackRedimido);
+            db.movimientos_cashback.push({
+                id_movimiento: `CB-RED-${Date.now()}`,
+                id_cliente: cliente.id,
+                id_venta: venta.id_venta,
+                tipo: 'redencion',
+                monto: cashbackRedimido,
+                fecha: new Date().toISOString(),
+                estatus: 'aplicado'
+            });
+        }
+
+        // 2. Acreditar cashback automático sobre el monto pagado (HU-17)
+        // El cashback se calcula sobre el total pagado (sin contar lo cubierto por cashback previo)
+        const baseCalculo = Math.max(0, venta.total - cashbackRedimido);
+        cashbackGenerado = parseFloat(((baseCalculo * config.porcentaje) / 100).toFixed(2));
+
+        if (cashbackGenerado > 0) {
+            const fechaCaducidad = new Date();
+            fechaCaducidad.setDate(fechaCaducidad.getDate() + config.dias_vigencia);
+
+            cliente.saldo_cashback = parseFloat(((cliente.saldo_cashback || 0) + cashbackGenerado).toFixed(2));
+
+            db.movimientos_cashback.push({
+                id_movimiento: `CB-ACR-${Date.now()}`,
+                id_cliente: cliente.id,
+                id_venta: venta.id_venta,
+                tipo: 'acreditacion',
+                monto: cashbackGenerado,
+                fecha: new Date().toISOString(),
+                fecha_caducidad: fechaCaducidad.toISOString(),
+                estatus: 'vigente'
+            });
+        }
+    }
+
+    venta.cashback_generado = cashbackGenerado;
+    venta.cashback_redimido = cashbackRedimido;
+    db.ventas.push(venta);
+
+    writeDB(db);
+
+    res.json({
+        success: true,
+        message: "Venta registrada con éxito.",
+        cashback_generado: cashbackGenerado,
+        nuevo_saldo: cliente ? cliente.saldo_cashback : 0
+    });
 });
 
 // INICIALIZACIÓN DEL SERVIDOR 

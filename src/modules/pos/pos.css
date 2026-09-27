@@ -1,176 +1,311 @@
-* { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
-body { background-color: #f6f3ed; padding: 20px; height: 100vh; overflow: hidden; }
+* { 
+  box-sizing: border-box; 
+  margin: 0; 
+  padding: 0; 
+  font-family: Arial, sans-serif; 
+}
 
-.pos-container { display: flex; gap: 20px; height: 100%; }
+body { 
+  background-color: #f6f3ed; 
+  padding: 15px; 
+  height: 100vh; 
+  overflow: hidden; 
+}
 
-/* Panel del catálogo */
-.catalog-panel { flex: 2; background: #fff; border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; flex-direction: column; overflow: hidden; }
-.catalog-panel h2 { color: #8b1818; margin-bottom: 15px; }
+.pos-container { 
+  display: flex; 
+  gap: 15px; 
+  height: 100%; 
+}
 
-.search-bar { display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; }
-#search { padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 1rem; }
+/* =========================================
+   PANEL IZQUIERDO: CATÁLOGO
+   ========================================= */
+.catalog-panel { 
+  flex: 2; 
+  background: #fff; 
+  border-radius: 8px; 
+  padding: 20px; 
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08); 
+  display: flex; 
+  flex-direction: column; 
+  overflow: hidden; 
+}
 
-.filters { display: flex; gap: 10px; }
-.filter-btn { padding: 8px 15px; border: 1px solid #8b1818; background: white; color: #8b1818; border-radius: 4px; cursor: pointer; font-weight: bold; }
-.filter-btn.active { background: #8b1818; color: white; }
+.catalog-panel h2 { 
+  color: #8b1818; 
+  margin-bottom: 12px; 
+}
+
+.search-bar { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 10px; 
+  margin-bottom: 12px; 
+}
+
+#search { 
+  padding: 8px 12px; 
+  border: 1px solid #ccc; 
+  border-radius: 4px; 
+  font-size: 0.95rem; 
+}
+
+.filters { 
+  display: flex; 
+  gap: 8px; 
+}
+
+.filter-btn { 
+  padding: 6px 14px; 
+  border: 1px solid #8b1818; 
+  background: white; 
+  color: #8b1818; 
+  border-radius: 4px; 
+  cursor: pointer; 
+  font-weight: bold; 
+  font-size: 0.85rem; 
+}
+
+.filter-btn.active { 
+  background: #8b1818; 
+  color: white; 
+}
 
 /* Cuadrícula de productos */
-.product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; overflow-y: auto; padding-right: 5px; flex: 1; }
-.product-card { border: 1px solid #eee; border-radius: 8px; padding: 10px; text-align: center; cursor: pointer; transition: transform 0.1s; display: flex; flex-direction: column; justify-content: space-between; }
-.product-card:hover { transform: scale(1.02); box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-color: #8b1818; }
-.product-card img { width: 100%; height: 90px; object-fit: cover; border-radius: 4px; margin-bottom: 10px; }
-.product-card .price { font-weight: bold; color: #8b1818; font-size: 1.1rem; margin: 5px 0; }
-
-/* Panel del ticket */
-.ticket-panel { flex: 1; background: #fff; border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; flex-direction: column; min-width: 320px; }
-.ticket-panel h2 { color: #8b1818; margin-bottom: 15px; }
-
-.client-section { margin-bottom: 15px; display: flex; flex-direction: column; gap: 5px; }
-#client-search { padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
-#client-name { font-weight: bold; color: #8b1818; margin-top: 5px;}
-
-.ticket-items { flex: 1; overflow-y: auto; border-top: 1px dashed #ccc; border-bottom: 1px dashed #ccc; margin: 15px 0; padding: 10px 0; }
-.ticket-item { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.95rem; }
-
-.summary-line { display: flex; justify-content: space-between; margin-bottom: 5px; color: #555; }
-.summary-line.total { font-size: 1.2rem; font-weight: bold; color: #000; margin-top: 10px; }
-
-.product-card {
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  padding: 1rem;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
+.product-grid { 
+  display: grid; 
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); 
+  gap: 12px; 
+  overflow-y: auto; 
+  padding-right: 5px; 
+  flex: 1; 
 }
 
-.product-card img {
-  width: 90px;
-  height: 90px;
-  object-fit: contain;
+.product-card { 
+  border: 1px solid #eee; 
+  border-radius: 8px; 
+  padding: 10px; 
+  text-align: center; 
+  cursor: pointer; 
+  transition: transform 0.1s, box-shadow 0.1s; 
+  display: flex; 
+  flex-direction: column; 
+  justify-content: space-between; 
+  background: #fff;
 }
 
-.product-card h4 {
-  font-size: 0.9rem;
-  color: #222;
+.product-card:hover { 
+  transform: scale(1.02); 
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
+  border-color: #8b1818; 
 }
 
-.product-card .price {
-  font-weight: bold;
-  color: #8b1818;
+.product-card img { 
+  width: 100%; 
+  height: 80px; 
+  object-fit: contain; 
+  margin-bottom: 8px; 
 }
 
-.product-card button {
-  width: 100%;
-  padding: 0.45rem;
-  background: #8b1818;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
+.product-card h3 { 
+  font-size: 0.85rem; 
+  color: #222; 
+  margin-bottom: 4px; 
 }
 
-/* Ticket */
-.ticket-panel {
-  background: #ffffff;
-  border-radius: 8px;
-  padding: 1.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  display: flex;
-  flex-direction: column;
-  gap: 1.2rem;
-  height: 100%;
+.product-card .price { 
+  font-weight: bold; 
+  color: #8b1818; 
+  font-size: 1rem; 
+  margin: 3px 0; 
 }
 
-.ticket-panel h2 {
-  text-align: center;
-  font-size: 1.1rem;
-  letter-spacing: 0.5px;
+/* =========================================
+   PANEL DERECHO: TICKET
+   ========================================= */
+.ticket-panel { 
+  flex: 1; 
+  background: #fff; 
+  border-radius: 8px; 
+  padding: 16px 18px; 
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08); 
+  display: flex; 
+  flex-direction: column; 
+  min-width: 320px; 
+  max-width: 380px; 
+  height: 100%; 
+  overflow-y: auto; 
 }
 
-.ticket-section {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
+.ticket-panel h2 { 
+  color: #8b1818; 
+  margin-bottom: 8px; 
+  text-align: center; 
+  font-size: 1.15rem; 
+  letter-spacing: 0.5px; 
 }
 
-.ticket-section label {
-  font-size: 0.85rem;
-  font-weight: bold;
+.client-section { 
+  margin-bottom: 8px; 
+  display: flex; 
+  flex-direction: column; 
+  gap: 4px; 
 }
 
-.ticket-section input[type="text"] {
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+#client-search { 
+  padding: 6px 10px; 
+  border: 1px solid #ccc; 
+  border-radius: 4px; 
+  font-size: 0.85rem; 
 }
 
-.radio-group {
-  display: flex;
-  gap: 1rem;
+#client-name { 
+  font-size: 0.85rem; 
+  color: #8b1818; 
+  font-weight: bold; 
 }
 
-.ticket-items {
-  flex: 1;
-  overflow-y: auto;
-  border-top: 1px dashed #ccc;
-  border-bottom: 1px dashed #ccc;
-  padding: 0.5rem 0;
+/* Lista de ítems en el ticket */
+.ticket-items { 
+  flex: none; 
+  min-height: 60px; 
+  max-height: 130px; 
+  overflow-y: auto; 
+  border-top: 1px dashed #ccc; 
+  border-bottom: 1px dashed #ccc; 
+  margin: 8px 0; 
+  padding: 6px 0; 
 }
 
-.ticket-summary {
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
+.ticket-item { 
+  display: flex; 
+  justify-content: space-between; 
+  margin-bottom: 4px; 
+  font-size: 0.85rem; 
 }
 
-.summary-line {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.95rem;
-  font-weight: bold;
+/* Resumen del ticket */
+.ticket-summary { 
+  margin-bottom: 8px; 
 }
 
-.summary-line.total {
-  font-size: 1.15rem;
-  color: #8b1818;
+.summary-line { 
+  display: flex; 
+  justify-content: space-between; 
+  margin-bottom: 3px; 
+  color: #555; 
+  font-size: 0.9rem; 
 }
 
-.btn-checkout {
-  padding: 0.75rem;
-  background: #8b1818;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  font-weight: bold;
-  cursor: pointer;
-  width: 100%;
+.summary-line.total { 
+  font-size: 1.15rem; 
+  font-weight: bold; 
+  color: #8b1818; 
+  margin-top: 4px; 
 }
 
-#input-efectivo {
-  width: 75px;
-  size: 10;
+/* =========================================
+   MÉTODOS DE PAGO Y CASHBACK
+   ========================================= */
+.payment-methods-section { 
+  background-color: #faf7f2; 
+  border: 1px solid #ebdccc; 
+  border-radius: 6px; 
+  padding: 8px 10px; 
+  margin-top: 4px; 
 }
 
-#input-tarjeta {
-  width: 65px;
-  size: 10;
+.payment-grid { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 5px; 
 }
 
-#input-transferencia {
-  width: 115px;
-  size: 10;
+.payment-row { 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  background: #ffffff; 
+  padding: 4px 8px; 
+  border-radius: 4px; 
+  border: 1px solid #e0e0e0; 
 }
 
-#input-cashback {
-  width: 90px;
-  size: 10;
+.payment-row.highlight-cb { 
+  border-color: #ffd8a8; 
+  background-color: #fff9db; 
 }
-/* Botones */
-.btn-primary { background: #8b1818; color: white; border: none; padding: 12px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 1rem; transition: background 0.2s;}
-.btn-primary:hover { background: #6b0f0f; }
-.btn-secondary { border: none; padding: 12px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 1rem; transition: opacity 0.2s; }
-.btn-secondary:hover { opacity: 0.8; }
+
+.pay-label { 
+  display: flex; 
+  align-items: center; 
+  gap: 6px; 
+  font-size: 0.82rem; 
+  color: #333; 
+  cursor: pointer; 
+}
+
+.pay-label input[type="checkbox"] { 
+  cursor: pointer; 
+}
+
+.input-money-wrapper { 
+  display: flex; 
+  align-items: center; 
+  border: 1px solid #ccc; 
+  border-radius: 4px; 
+  padding: 2px 6px; 
+  background-color: #ffffff; 
+  width: 85px; 
+  box-sizing: border-box; 
+}
+
+.input-money-wrapper span { 
+  font-size: 0.75rem; 
+  color: #777; 
+  margin-right: 3px; 
+}
+
+.pay-input { 
+  width: 100% !important; 
+  border: none; 
+  outline: none; 
+  font-size: 0.85rem; 
+  text-align: right; 
+  padding: 0; 
+  background: transparent; 
+}
+
+/* Botones de acción */
+.btn-primary { 
+  background: #8b1818; 
+  color: white; 
+  border: none; 
+  padding: 10px; 
+  border-radius: 4px; 
+  font-weight: bold; 
+  cursor: pointer; 
+  font-size: 0.95rem; 
+  transition: background 0.2s; 
+}
+
+.btn-primary:hover { 
+  background: #6b0f0f; 
+}
+
+.btn-secondary { 
+  background: #666; 
+  color: white; 
+  border: none; 
+  padding: 10px; 
+  border-radius: 4px; 
+  font-weight: bold; 
+  cursor: pointer; 
+  font-size: 0.95rem; 
+  transition: opacity 0.2s; 
+}
+
+.btn-secondary:hover { 
+  opacity: 0.85; 
+}
