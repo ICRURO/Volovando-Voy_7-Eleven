@@ -180,6 +180,58 @@ if (btnCancel) {
     });
 }
 
+const chkEfectivo = document.getElementById("check-efectivo");
+const inpEfectivo = document.getElementById("input-efectivo");
+if (chkEfectivo) {
+    chkEfectivo.addEventListener("click", async () => {
+        if (chkEfectivo.checked) {
+            inpEfectivo.disabled = false;
+        } else {
+            inpEfectivo.disabled = true;
+            inpEfectivo.value = "0.00";
+        }
+    })
+}
+
+const chkTarjeta = document.getElementById("check-tarjeta");
+const inpTarjeta = document.getElementById("input-tarjeta");
+if (chkTarjeta) {
+    chkTarjeta.addEventListener("click", async () => {
+        if (chkTarjeta.checked) {
+            inpTarjeta.disabled = false;
+        } else {
+            inpTarjeta.disabled = true;
+            inpTarjeta.value = "0.00";
+        }
+    })
+}
+
+const chkTransferencia = document.getElementById("check-transferencia");
+const inpTransferencia = document.getElementById("input-transferencia");
+if (chkTransferencia) {
+    chkTransferencia.addEventListener("click", async () => {
+        if (chkTransferencia.checked) {
+            inpTransferencia.disabled = false;
+        } else {
+            inpTransferencia.disabled = true;
+            inpTransferencia.value = "0.00";
+        }
+    })
+}
+
+const chkCashback = document.getElementById("check-cashback");
+const inpCashback = document.getElementById("input-cashback");
+if (chkCashback) {
+    chkCashback.addEventListener("click", async () => {
+        if (chkCashback.checked) {
+            inpCashback.disabled = false;
+        } else {
+            inpCashback.disabled = true;
+            inpCashback.value = "0.00";
+        }
+    })
+}
+
 // H14, H17 y H18: Cobro de Venta con integración de Métodos de Pago y Cashback
 const btnPay = document.getElementById("btn-pay");
 if (btnPay) {
