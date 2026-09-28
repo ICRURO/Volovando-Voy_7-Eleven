@@ -1,102 +1,136 @@
-.inventory-container {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  padding: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
   font-family: Arial, sans-serif;
 }
 
+body {
+  background-color: #f6f3ed;
+  color: #333333;
+  padding: 24px;
+}
+
+.inventory-container {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* Encabezado */
 .inventory-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 24px;
 }
 
 .inventory-header h1 {
-  margin: 0;
-  color: #17252a;
-}
-
-/* Tarjetas métricas superiores */
-.inventory-summary {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1rem;
-}
-
-.summary-card {
-  background-color: #ffffff;
-  border-radius: 8px;
-  padding: 1.2rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  border-left: 5px solid #2b7a78;
-}
-
-.summary-card.alert {
-  border-left-color: #e63946;
-}
-
-.summary-card h3 {
-  margin: 0;
-  font-size: 0.85rem;
-  color: #666;
-  text-transform: uppercase;
+  font-size: 1.6rem;
+  color: #8b1818;
+  font-weight: 800;
   letter-spacing: 0.5px;
 }
 
-.summary-card .value {
-  font-size: 2rem;
-  font-weight: bold;
-  margin-top: 0.4rem;
-  color: #17252a;
+.inventory-header p {
+  color: #666666;
+  font-size: 0.9rem;
+  margin-top: 4px;
 }
 
-/* Barra de herramientas */
-.inventory-toolbar {
+/* Botón superior adaptado a la paleta del POS */
+.btn-top-action {
+  background-color: #8b1818;
+  color: #ffffff;
+  padding: 10px 18px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: bold;
+  transition: background-color 0.2s, transform 0.1s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: inline-block;
+}
+
+.btn-top-action:hover {
+  background-color: #6e1212;
+  transform: translateY(-1px);
+}
+
+/* Tarjetas de Métricas */
+.inventory-summary {
   display: flex;
+  gap: 18px;
+  margin-bottom: 24px;
   flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 1rem;
-  align-items: center;
+}
+
+.summary-card {
+  flex: 1;
+  min-width: 220px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 18px 22px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border-left: 6px solid #8b1818;
+}
+
+.summary-card.warm {
+  border-left-color: #e68a19;
+}
+
+.summary-card.alert {
+  border-left-color: #d32f2f;
+}
+
+.summary-card h3 {
+  font-size: 0.8rem;
+  color: #666666;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-bottom: 8px;
+}
+
+.summary-card .value {
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: #222222;
+}
+
+.summary-card.warm .value {
+  color: #e68a19;
+}
+
+.summary-card.alert .value {
+  color: #d32f2f;
+}
+
+/* Barra de búsqueda */
+.inventory-toolbar {
+  margin-bottom: 18px;
 }
 
 .search-box {
-  flex: 1;
-  max-width: 350px;
-  padding: 0.65rem 1rem;
-  border: 1px solid #ccc;
+  width: 100%;
+  max-width: 420px;
+  padding: 10px 14px;
+  border: 1px solid #d0c8be;
   border-radius: 6px;
   font-size: 0.95rem;
   outline: none;
+  background-color: #ffffff;
+  transition: border-color 0.2s;
 }
 
 .search-box:focus {
-  border-color: #2b7a78;
+  border-color: #8b1818;
 }
 
-.btn-primary {
-  background-color: #2b7a78;
-  color: #fff;
-  border: none;
-  padding: 0.65rem 1.2rem;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: background 0.2s ease;
-}
-
-.btn-primary:hover {
-  background-color: #205e5c;
-}
-
-/* Tabla */
+/* Tabla de Inventario */
 .table-wrapper {
-  background: #ffffff;
+  background-color: #ffffff;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  overflow-x: auto;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
 .inventory-table {
@@ -105,51 +139,67 @@
   text-align: left;
 }
 
-.inventory-table th,
-.inventory-table td {
-  padding: 14px 18px;
-  border-bottom: 1px solid #eee;
-}
-
 .inventory-table th {
-  background-color: #f7f9fa;
-  color: #333;
-  font-weight: 600;
+  background-color: #8b1818;
+  color: #ffffff;
+  padding: 12px 16px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
 }
 
+.inventory-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #f0eae1;
+  font-size: 0.9rem;
+  vertical-align: middle;
+}
+
+.inventory-table tr:hover {
+  background-color: #faf7f2;
+}
+
+/* Insignias de estado */
 .badge {
+  display: inline-block;
   padding: 4px 10px;
   border-radius: 12px;
-  font-size: 0.75rem;
+  font-size: 0.78rem;
   font-weight: bold;
 }
 
 .badge-ok {
-  background-color: #d4edda;
-  color: #155724;
+  background-color: #e8f5e9;
+  color: #2e7d32;
 }
 
 .badge-low {
-  background-color: #fff3cd;
-  color: #856404;
+  background-color: #fff3e0;
+  color: #e65100;
 }
 
 .badge-out {
-  background-color: #f8d7da;
-  color: #721c24;
+  background-color: #ffebee;
+  color: #c62828;
 }
 
+/* Botones de ajuste de existencias */
 .btn-action {
-  padding: 6px 12px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background: #fff;
-  cursor: pointer;
+  background-color: #ffffff;
+  border: 1px solid #d0c8be;
+  color: #8b1818;
   font-weight: bold;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
   margin-right: 4px;
-  transition: background 0.15s ease;
+  font-size: 0.85rem;
+  transition: background-color 0.15s, color 0.15s, border-color 0.15s;
 }
 
 .btn-action:hover {
-  background: #e9ecef;
+  background-color: #8b1818;
+  color: #ffffff;
+  border-color: #8b1818;
 }

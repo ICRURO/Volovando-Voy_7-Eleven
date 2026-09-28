@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Control de Inventario - Volovando Voy</title>
-  <link rel="stylesheet" href="../../../assets/css/global.css">
   <link rel="stylesheet" href="inventory.css">
 </head>
 <body>
@@ -14,16 +13,16 @@
         <h1>Control de Inventario</h1>
         <p>Monitoreo y administración de stock de productos</p>
       </div>
-      <a href="../pos/pos.html" class="btn-primary" style="text-decoration: none;">Ir al Inicio</a>
+      <a href="../pos/pos.html" class="btn-top-action">Ir al Menú de Ventas</a>
     </header>
 
-    <!-- Métricas -->
+    <!-- Métricas con estilo cálido del sistema -->
     <div class="inventory-summary">
       <div class="summary-card">
         <h3>Total de Productos</h3>
         <div class="value" id="metric-total">0</div>
       </div>
-      <div class="summary-card">
+      <div class="summary-card warm">
         <h3>Unidades Totales</h3>
         <div class="value" id="metric-units">0</div>
       </div>
@@ -38,7 +37,7 @@
       <input type="text" id="input-search" class="search-box" placeholder="Buscar por nombre o categoría...">
     </div>
 
-    <!-- Tabla de stock -->
+    <!-- Tabla con cabecera institucional -->
     <div class="table-wrapper">
       <table class="inventory-table">
         <thead>
