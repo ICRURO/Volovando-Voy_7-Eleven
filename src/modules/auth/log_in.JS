@@ -56,7 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 mensajeExito.style.display = "block";
 
                 setTimeout(() => {
-                    window.location.href = "../../dashboard.html";
+                    window.location.href = "../dashboard.html";
                 }, 1000);
 
             } catch (error) {
