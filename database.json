@@ -79,7 +79,7 @@
       "nombre": "Volován de Jamón y Queso",
       "categoria": "Clásicos",
       "precio_venta": 25,
-      "stock_actual": 31,
+      "stock_actual": 30,
       "umbral_minimo": 10,
       "imagen": "../../../assets/volovan.png",
       "lotes": [
@@ -129,13 +129,31 @@
       ]
     },
     {
-      "id": "BEB-600",
-      "nombre": "Refresco 600ml",
+      "id": "Refresco1",
+      "nombre": "Pepsi de Lata 500ml",
       "categoria": "Bebidas",
       "precio_venta": 18,
       "stock_actual": 22,
       "umbral_minimo": 15,
-      "imagen": "../../../assets/volovino.png",
+      "imagen": "../../../assets/Pepsi.png",
+      "lotes": [
+        {
+          "id_lote": "L-1004",
+          "cantidad": 22,
+          "fecha_ingreso": "2026-09-10T08:00:00Z",
+          "fecha_caducidad": "2027-03-01T23:59:59Z",
+          "proveedor": "Coca-Cola FEMSA"
+        }
+      ]
+    },
+    {
+      "id": "Refresco2",
+      "nombre": "Mirinda 600ml",
+      "categoria": "Bebidas",
+      "precio_venta": 18,
+      "stock_actual": 16,
+      "umbral_minimo": 15,
+      "imagen": "../../../assets/Mirinda.png",
       "lotes": [
         {
           "id_lote": "L-1004",
@@ -312,6 +330,39 @@
         }
       ],
       "cashback_generado": 2.5,
+      "cashback_redimido": 0
+    },
+    {
+      "id_venta": "V-1790779358270",
+      "fecha": "2026-09-30T14:42:38.270Z",
+      "id_empleado": "EMP-001",
+      "id_cliente": "CLI-GENERAL",
+      "metodo_pago": "efectivo",
+      "cashback_usado": 0,
+      "tipo_venta": "Mostrador",
+      "total": 25,
+      "items": [
+        {
+          "id": "VOL-JQ",
+          "nombre": "Volován de Jamón y Queso",
+          "categoria": "Clásicos",
+          "precio_venta": 25,
+          "stock_actual": 31,
+          "umbral_minimo": 10,
+          "imagen": "../../../assets/volovan.png",
+          "lotes": [
+            {
+              "id_lote": "L-1001",
+              "cantidad": 35,
+              "fecha_ingreso": "2026-09-17T08:00:00Z",
+              "fecha_caducidad": "2026-09-20T23:59:59Z",
+              "proveedor": "Cocina Central"
+            }
+          ],
+          "cantidad": 1
+        }
+      ],
+      "cashback_generado": 0,
       "cashback_redimido": 0
     }
   ],

@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Volovando Voy - Dashboard</title>
-  <!-- Sube un nivel (..) para encontrar assets desde src/ -->
   <link rel="stylesheet" href="../assets/css/global.css">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -27,21 +26,22 @@
     <img src="../assets/volovino.png" alt="Mascota">
 
     <nav class="sidebar-nav">
-      <!-- Rutas relativas apuntando a la carpeta modules -->
-      <button class="nav-btn only-admin active" onclick="loadModule('modules/pos/pos.html', this)">MENÚ / VENTAS</button>
+      <button id="btn-home" class="nav-btn active" onclick="loadModule('welcome.html', this)">HOME</button>
+      
+      <button class="nav-btn only-admin" onclick="loadModule('modules/pos/pos.html', this)">MENÚ / VENTAS</button>
       <button class="nav-btn only-admin" onclick="loadModule('modules/inventory/inventory.html', this)">INVENTARIO</button>
       <button class="nav-btn only-admin" onclick="alert('Módulo de pedidos en desarrollo')">PEDIDOS</button>
       <button class="nav-btn only-admin" onclick="loadModule('modules/clients/clients.html', this)">CLIENTES</button>
       <button class="nav-btn only-admin" onclick="loadModule('/shifts/admin', this)">TURNOS Y EMPLEADOS</button>
-      <button class="nav-btn only-admin active" onclick="loadModule('modules/reports/reports.html', this)">REPORTES</button>
+      <button class="nav-btn only-admin" onclick="loadModule('modules/reports/reports.html', this)">REPORTES</button>
 
-      <!-- Botón para cerrar sesión -->
       <button class="nav-btn logout-btn" onclick="logout()">CERRAR SESIÓN</button>
     </nav>
   </aside>
 
   <main class="main-content">
-    <iframe id="content-frame" src="modules/pos/pos.html"></iframe>
+    <!-- El iframe ahora carga welcome.html por defecto -->
+    <iframe id="content-frame" src="welcome.html"></iframe>
   </main>
 
   <script>
@@ -49,7 +49,6 @@
       const frame = document.getElementById('content-frame');
 
       try {
-        // Le pide la información de la sesión al servidor
         const res = await fetch('/api/auth/session');
         
         if (!res.ok) {
@@ -59,12 +58,13 @@
 
         const usuario = await res.json();
 
+        // Ocultar botones de admin si es empleado, pero mantener a ambos en el "HOME"
         if (usuario.rol === 'empleado') {
           document.querySelectorAll('.only-admin').forEach(btn => btn.style.display = 'none');
-          if (frame) frame.src = '/shifts/empleado';
+          // Si necesitas que el empleado tenga un dashboard diferente, puedes cambiar el src aquí.
+          // De lo contrario, se quedará en welcome.html
         } else {
           document.querySelectorAll('.only-admin').forEach(btn => btn.style.display = 'block');
-          if (frame) frame.src = 'modules/pos/pos.html';
         }
       } catch (error) {
         console.error("Error al consultar sesión del servidor.");
@@ -81,8 +81,6 @@
       localStorage.clear();
       window.location.href = "../index.html"; 
     }
-</script>
-
-
+  </script>
 </body>
 </html>
