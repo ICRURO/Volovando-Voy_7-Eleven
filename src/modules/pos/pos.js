@@ -258,6 +258,21 @@ if (btnPay) {
         const cbInput = document.getElementById("input-cashback");
         const pagoCashback = cbInput ? (parseFloat(cbInput.value) || 0) : 0;
 
+        const efInput = document.getElementById("input-efectivo");
+        const pagoEfectivo = efInput ? (parseFloat(efInput.value) || 0) : 0;
+        const tjInput = document.getElementById("input-tarjeta");
+        const pagoTarjeta = efInput ? (parseFloat(tjInput.value) || 0) : 0;
+        const tfInput = document.getElementById("input-transferencia");
+        const pagoTransferencia = efInput ? (parseFloat(tfInput.value) || 0) : 0;
+
+        const sumaPagos = pagoCashback + pagoEfectivo + pagoTarjeta + pagoTransferencia;
+        const btnPendiente = document.getElementById("btn-pendiente");
+
+        if (sumaPagos != totalVenta && !btnPendiente.checked){
+            alert("El pago no acompleta al total de la venta, marque el botón '¿Pago pendiente?' de no poder llegarse al total al momento");
+            return;
+        }
+
         // Validaciones HU-18 (Pagar con saldo de cashback)
         if (pagoCashback > 0) {
             if (!clienteActual) {
