@@ -1,4 +1,32 @@
-/**
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: src/modules/clients/clients.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: src/modules/clients/clients.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
  * @file clients.js
  * @description Lógica del lado del cliente para el módulo de consulta de clientes y cashback.
  * Permite buscar clientes por ID o correo, mostrando su saldo, historial de movimientos
@@ -33,7 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
      * Actualiza el DOM con los resultados obtenidos.
      * 
      * @param {string} criterio - El ID del cliente o su correo electrónico para realizar la búsqueda.
-     * @returns {Promise<void>} No retorna ningún valor directamente, actualiza la interfaz.
+     * @returns {Promise&lt;void>} No retorna ningún valor directamente, actualiza la interfaz.
      */
     async function consultarCliente(criterio) {
         if (!criterio) {
@@ -63,7 +91,7 @@ document.addEventListener("DOMContentLoaded", () => {
             txtSaldo.textContent = `$${(parseFloat(cliente.saldo_cashback) || 0).toFixed(2)}`;
 
             // 2. HU-32: Mostrar notificación si hay saldo por caducar
-            if (saldoPorCaducar > 0 && fechaLimiteProxima) {
+            if (saldoPorCaducar > 0 &amp;&amp; fechaLimiteProxima) {
                 montoAlerta.textContent = `$${saldoPorCaducar.toFixed(2)}`;
                 fechaAlerta.textContent = new Date(fechaLimiteProxima).toLocaleDateString();
                 alertaVencimiento.style.display = "block";
@@ -74,11 +102,11 @@ document.addEventListener("DOMContentLoaded", () => {
             // 3. HU-33: Llenar la tabla del historial
             if (!historial || historial.length === 0) {
                 tablaHistorial.innerHTML = `
-                    <tr>
-                        <td colspan="5" style="text-align: center; color: #777; padding: 20px;">
+                    &lt;tr>
+                        &lt;td colspan="5" style="text-align: center; color: #777; padding: 20px;">
                             Este cliente aún no tiene movimientos de cashback registrados.
-                        </td>
-                    </tr>
+                        &lt;/td>
+                    &lt;/tr>
                 `;
                 return;
             }
@@ -95,13 +123,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 const venceTexto = item.fecha_caducidad ? new Date(item.fecha_caducidad).toLocaleDateString() : 'N/A';
 
                 return `
-                    <tr>
-                        <td>${fechaTexto}</td>
-                        <td><span class="${claseMonto}">${textoTipo}</span></td>
-                        <td>${item.id_venta || '---'}</td>
-                        <td class="${claseMonto}">${signo}$${(parseFloat(item.monto) || 0).toFixed(2)}</td>
-                        <td>${venceTexto}</td>
-                    </tr>
+                    &lt;tr>
+                        &lt;td>${fechaTexto}&lt;/td>
+                        &lt;td>&lt;span class="${claseMonto}">${textoTipo}&lt;/span>&lt;/td>
+                        &lt;td>${item.id_venta || '---'}&lt;/td>
+                        &lt;td class="${claseMonto}">${signo}$${(parseFloat(item.monto) || 0).toFixed(2)}&lt;/td>
+                        &lt;td>${venceTexto}&lt;/td>
+                    &lt;/tr>
                 `;
             }).join('');
 
@@ -135,4 +163,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Cargar automáticamente a Sara (CLI-1001) para verla de inmediato al cargar la vista
     consultarCliente("CLI-1001");
-});
+});</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Events</h3><ul><li><a href="global.html#event:change">change</a></li><li><a href="global.html#event:click">click</a></li><li><a href="global.html#event:input">input</a></li><li><a href="global.html#event:keypress">keypress</a></li><li><a href="global.html#event:submit">submit</a></li></ul><h3>Global</h3><ul><li><a href="global.html#Puerto">Puerto</a></li><li><a href="global.html#Ruta">Ruta</a></li><li><a href="global.html#actualizarBotones">actualizarBotones</a></li><li><a href="global.html#calculateMetrics">calculateMetrics</a></li><li><a href="global.html#cargarBD">cargarBD</a></li><li><a href="global.html#cargarConfiguracionHorarios">cargarConfiguracionHorarios</a></li><li><a href="global.html#carrito">carrito</a></li><li><a href="global.html#catalogGrid">catalogGrid</a></li><li><a href="global.html#categoriaActiva">categoriaActiva</a></li><li><a href="global.html#clienteActual">clienteActual</a></li><li><a href="global.html#consultarCliente">consultarCliente</a></li><li><a href="global.html#empleadoEnTurno">empleadoEnTurno</a></li><li><a href="global.html#fetchInventory">fetchInventory</a></li><li><a href="global.html#getStatusBadge">getStatusBadge</a></li><li><a href="global.html#initReports">initReports</a></li><li><a href="global.html#inventarioBD">inventarioBD</a></li><li><a href="global.html#inventory">inventory</a></li><li><a href="global.html#limpiarFormulario">limpiarFormulario</a></li><li><a href="global.html#limpiarMensajes">limpiarMensajes</a></li><li><a href="global.html#loadReportData">loadReportData</a></li><li><a href="global.html#mostrarMensaje">mostrarMensaje</a></li><li><a href="global.html#obtenerEstadoBD">obtenerEstadoBD</a></li><li><a href="global.html#promoInfo">promoInfo</a></li><li><a href="global.html#readDB">readDB</a></li><li><a href="global.html#renderCatalogo">renderCatalogo</a></li><li><a href="global.html#renderTable">renderTable</a></li><li><a href="global.html#renderTicket">renderTicket</a></li><li><a href="global.html#renderizarTablaHistorial">renderizarTablaHistorial</a></li><li><a href="global.html#searchInput">searchInput</a></li><li><a href="global.html#setupTabs">setupTabs</a></li><li><a href="global.html#subtotalLabel">subtotalLabel</a></li><li><a href="global.html#ticketItems">ticketItems</a></li><li><a href="global.html#totalLabel">totalLabel</a></li><li><a href="global.html#updateReportTitle">updateReportTitle</a></li><li><a href="global.html#usuarioSesionActiva">usuarioSesionActiva</a></li><li><a href="global.html#usuariosBD">usuariosBD</a></li><li><a href="global.html#writeDB">writeDB</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Mon Oct 05 2026 19:29:34 GMT-0600 (hora estándar central)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

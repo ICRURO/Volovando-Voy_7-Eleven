@@ -1,12 +1,30 @@
+/**
+ * @file inventory.js
+ * @description Lógica del lado del cliente para el módulo de inventario.
+ * Se encarga de cargar los productos, mostrar métricas, filtrar mediante búsqueda
+ * y ajustar el stock directamente desde la interfaz, comunicándose con la API.
+ */
+
+/**
+ * @type {Array<Object>}
+ * @description Arreglo global que almacena los datos del inventario cargados desde el servidor.
+ */
 let inventory = [];
 
+// Referencias a los elementos del DOM
 const tbody = document.getElementById("inventory-tbody");
 const searchInput = document.getElementById("input-search");
 const metricTotal = document.getElementById("metric-total");
 const metricUnits = document.getElementById("metric-units");
 const metricAlerts = document.getElementById("metric-alerts");
 
-// Cargar inventario desde el backend (database.json)
+/**
+ * @async
+ * @function fetchInventory
+ * @description Obtiene los datos del inventario desde la base de datos (backend) 
+ * y llama a la función para renderizar la tabla.
+ * @returns {Promise<void>} No retorna valor, actualiza el estado global y la vista.
+ */
 async function fetchInventory() {
     try {
         const res = await fetch('/api/inventory');
@@ -19,6 +37,12 @@ async function fetchInventory() {
     }
 }
 
+/**
+ * @function calculateMetrics
+ * @description Calcula y actualiza en el DOM las métricas generales del inventario:
+ * total de productos únicos, total de unidades físicas y cantidad de productos con stock bajo.
+ * @returns {void}
+ */
 function calculateMetrics() {
     const totalItems = inventory.length;
     const totalUnits = inventory.reduce((acc, item) => acc + (parseInt(item.stock_actual) || 0), 0);
@@ -29,6 +53,13 @@ function calculateMetrics() {
     metricAlerts.textContent = lowStockCount;
 }
 
+/**
+ * @function getStatusBadge
+ * @description Genera el código HTML para la etiqueta visual de estado de un producto.
+ * @param {number} stock - El stock actual del producto.
+ * @param {number} min - El stock mínimo permitido antes de mostrar alerta.
+ * @returns {string} Cadena de texto con el HTML del badge ('Agotado', 'Stock Bajo' o 'Disponible').
+ */
 function getStatusBadge(stock, min) {
     if (stock === 0) {
         return `<span class="badge badge-out" style="color: red; font-weight: bold;">Agotado</span>`;
@@ -38,6 +69,12 @@ function getStatusBadge(stock, min) {
     return `<span class="badge badge-ok" style="color: green; font-weight: bold;">Disponible</span>`;
 }
 
+/**
+ * @function renderTable
+ * @description Construye e inyecta las filas de la tabla de inventario en el DOM.
+ * @param {Array<Object>} [data=inventory] - Arreglo de productos a renderizar (por defecto usa el inventario completo).
+ * @returns {void}
+ */
 function renderTable(data = inventory) {
     tbody.innerHTML = "";
 
@@ -68,10 +105,19 @@ function renderTable(data = inventory) {
         tbody.appendChild(tr);
     });
 
+    // Actualizar los KPIs cada vez que se redibuja la tabla
     calculateMetrics();
 }
 
-// Búsqueda en tiempo real
+// ==========================================
+// EVENTOS DE LA INTERFAZ
+// ==========================================
+
+/**
+ * @event input
+ * @description Escucha los cambios en el campo de búsqueda de texto para filtrar 
+ * la tabla de inventario en tiempo real por nombre o categoría.
+ */
 if (searchInput) {
     searchInput.addEventListener("input", (e) => {
         const term = e.target.value.toLowerCase().trim();
@@ -84,7 +130,11 @@ if (searchInput) {
     });
 }
 
-// Ajustar existencias (+1 / -1) y guardarlas en el servidor
+/**
+ * @event click
+ * @description Delegación de eventos en el cuerpo de la tabla para manejar los botones de sumar (+1) o restar (-1) stock.
+ * Actualiza la interfaz de inmediato y envía una petición POST al servidor para persistir el cambio.
+ */
 tbody.addEventListener("click", async (e) => {
     const btn = e.target.closest("button");
     if (!btn) return;
@@ -120,5 +170,5 @@ tbody.addEventListener("click", async (e) => {
     }
 });
 
-// Cargar los productos reales al iniciar
+// Cargar los productos reales al iniciar la página
 fetchInventory();

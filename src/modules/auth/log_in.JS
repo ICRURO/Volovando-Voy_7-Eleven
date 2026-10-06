@@ -1,10 +1,22 @@
+/**
+ * @file log_in.js
+ * @description Lógica del lado del cliente para el inicio de sesión.
+ * Captura las credenciales del usuario, las valida y se comunica con el servidor.
+ */
+
 document.addEventListener("DOMContentLoaded", () => {
+    // Referencias a los elementos del DOM
     const form = document.getElementById("loginForm");
     const emailInput = document.getElementById("email");
     const passwordInput = document.getElementById("password");
     const mensajeError = document.getElementById("mensajeError");
     const mensajeExito = document.getElementById("mensajeExito");
 
+    /**
+     * @function limpiarMensajes
+     * @description Oculta y limpia los textos de los contenedores de error y éxito de forma segura.
+     * @returns {void}
+     */
     const limpiarMensajes = () => {
         if (mensajeError) {
             mensajeError.textContent = "";
@@ -18,6 +30,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Envío del formulario
     if (form) {
+        /**
+         * @event submit
+         * @description Controla el envío del formulario de inicio de sesión.
+         * Extrae los valores, los envía al backend y redirige al dashboard si es exitoso.
+         */
         form.addEventListener("submit", async (e) => {
             e.preventDefault();
             limpiarMensajes();
@@ -25,6 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const correoTexto = emailInput ? emailInput.value.trim() : "";
             const passTexto = passwordInput ? passwordInput.value.trim() : "";
 
+            // Validación de campos vacíos
             if (!correoTexto || !passTexto) {
                 mensajeError.textContent = "Por favor ingresa tu correo y contraseña.";
                 mensajeError.style.display = "block";
@@ -32,7 +50,10 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             try {
-                // Petición real al servidor enviando el correo
+                /**
+                 * Petición real al servidor enviando el correo y contraseña.
+                 * @type {Response}
+                 */
                 const res = await fetch('/api/auth/login', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -55,6 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 mensajeExito.textContent = "Iniciando sesión... ¡Bienvenido!";
                 mensajeExito.style.display = "block";
 
+                // Redirección al panel principal tras el login exitoso
                 setTimeout(() => {
                     window.location.href = "../dashboard.html";
                 }, 1000);

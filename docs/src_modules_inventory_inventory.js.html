@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: src/modules/inventory/inventory.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: src/modules/inventory/inventory.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @file inventory.js
+ * @description Lógica del lado del cliente para el módulo de inventario.
+ * Se encarga de cargar los productos, mostrar métricas, filtrar mediante búsqueda
+ * y ajustar el stock directamente desde la interfaz, comunicándose con la API.
+ */
+
+/**
+ * @type {Array&lt;Object>}
+ * @description Arreglo global que almacena los datos del inventario cargados desde el servidor.
+ */
+let inventory = [];
+
+// Referencias a los elementos del DOM
+const tbody = document.getElementById("inventory-tbody");
+const searchInput = document.getElementById("input-search");
+const metricTotal = document.getElementById("metric-total");
+const metricUnits = document.getElementById("metric-units");
+const metricAlerts = document.getElementById("metric-alerts");
+
+/**
+ * @async
+ * @function fetchInventory
+ * @description Obtiene los datos del inventario desde la base de datos (backend) 
+ * y llama a la función para renderizar la tabla.
+ * @returns {Promise&lt;void>} No retorna valor, actualiza el estado global y la vista.
+ */
+async function fetchInventory() {
+    try {
+        const res = await fetch('/api/inventory');
+        if (!res.ok) throw new Error("Error al obtener inventario");
+        inventory = await res.json();
+        renderTable();
+    } catch (error) {
+        console.error("Error al cargar inventario:", error);
+        tbody.innerHTML = `&lt;tr>&lt;td colspan="8" style="text-align:center; padding: 20px; color: red;">Error al conectar con la base de datos.&lt;/td>&lt;/tr>`;
+    }
+}
+
+/**
+ * @function calculateMetrics
+ * @description Calcula y actualiza en el DOM las métricas generales del inventario:
+ * total de productos únicos, total de unidades físicas y cantidad de productos con stock bajo.
+ * @returns {void}
+ */
+function calculateMetrics() {
+    const totalItems = inventory.length;
+    const totalUnits = inventory.reduce((acc, item) => acc + (parseInt(item.stock_actual) || 0), 0);
+    const lowStockCount = inventory.filter(item => (item.stock_actual || 0) &lt;= (item.stock_minimo || 5)).length;
+
+    metricTotal.textContent = totalItems;
+    metricUnits.textContent = totalUnits;
+    metricAlerts.textContent = lowStockCount;
+}
+
+/**
+ * @function getStatusBadge
+ * @description Genera el código HTML para la etiqueta visual de estado de un producto.
+ * @param {number} stock - El stock actual del producto.
+ * @param {number} min - El stock mínimo permitido antes de mostrar alerta.
+ * @returns {string} Cadena de texto con el HTML del badge ('Agotado', 'Stock Bajo' o 'Disponible').
+ */
+function getStatusBadge(stock, min) {
+    if (stock === 0) {
+        return `&lt;span class="badge badge-out" style="color: red; font-weight: bold;">Agotado&lt;/span>`;
+    } else if (stock &lt;= min) {
+        return `&lt;span class="badge badge-low" style="color: orange; font-weight: bold;">Stock Bajo&lt;/span>`;
+    }
+    return `&lt;span class="badge badge-ok" style="color: green; font-weight: bold;">Disponible&lt;/span>`;
+}
+
+/**
+ * @function renderTable
+ * @description Construye e inyecta las filas de la tabla de inventario en el DOM.
+ * @param {Array&lt;Object>} [data=inventory] - Arreglo de productos a renderizar (por defecto usa el inventario completo).
+ * @returns {void}
+ */
+function renderTable(data = inventory) {
+    tbody.innerHTML = "";
+
+    if (data.length === 0) {
+        tbody.innerHTML = `&lt;tr>&lt;td colspan="8" style="text-align:center; padding: 20px;">No se encontraron productos coincidentes.&lt;/td>&lt;/tr>`;
+        return;
+    }
+
+    data.forEach((item) => {
+        const tr = document.createElement("tr");
+        const stockActual = item.stock_actual !== undefined ? item.stock_actual : (item.stock || 0);
+        const stockMin = item.stock_minimo !== undefined ? item.stock_minimo : (item.stockMinimo || 5);
+        const precio = item.precio_venta !== undefined ? item.precio_venta : (item.precio || 0);
+
+        tr.innerHTML = `
+            &lt;td>#${item.id}&lt;/td>
+            &lt;td>&lt;strong>${item.nombre}&lt;/strong>&lt;/td>
+            &lt;td>${item.categoria}&lt;/td>
+            &lt;td>$${parseFloat(precio).toFixed(2)}&lt;/td>
+            &lt;td>&lt;strong>${stockActual}&lt;/strong>&lt;/td>
+            &lt;td>${stockMin}&lt;/td>
+            &lt;td>${getStatusBadge(stockActual, stockMin)}&lt;/td>
+            &lt;td>
+                &lt;button class="btn-action" data-action="add" data-id="${item.id}" style="padding: 2px 8px; cursor: pointer;">+1&lt;/button>
+                &lt;button class="btn-action" data-action="sub" data-id="${item.id}" style="padding: 2px 8px; cursor: pointer;">-1&lt;/button>
+            &lt;/td>
+        `;
+        tbody.appendChild(tr);
+    });
+
+    // Actualizar los KPIs cada vez que se redibuja la tabla
+    calculateMetrics();
+}
+
+// ==========================================
+// EVENTOS DE LA INTERFAZ
+// ==========================================
+
+/**
+ * @event input
+ * @description Escucha los cambios en el campo de búsqueda de texto para filtrar 
+ * la tabla de inventario en tiempo real por nombre o categoría.
+ */
+if (searchInput) {
+    searchInput.addEventListener("input", (e) => {
+        const term = e.target.value.toLowerCase().trim();
+        const filtered = inventory.filter(
+            (item) =>
+                item.nombre.toLowerCase().includes(term) ||
+                item.categoria.toLowerCase().includes(term)
+        );
+        renderTable(filtered);
+    });
+}
+
+/**
+ * @event click
+ * @description Delegación de eventos en el cuerpo de la tabla para manejar los botones de sumar (+1) o restar (-1) stock.
+ * Actualiza la interfaz de inmediato y envía una petición POST al servidor para persistir el cambio.
+ */
+tbody.addEventListener("click", async (e) => {
+    const btn = e.target.closest("button");
+    if (!btn) return;
+
+    const id = btn.dataset.id;
+    const action = btn.dataset.action;
+    const product = inventory.find((p) => String(p.id) === String(id));
+
+    if (!product) return;
+
+    let nuevoStock = product.stock_actual !== undefined ? product.stock_actual : product.stock;
+
+    if (action === "add") {
+        nuevoStock += 1;
+    } else if (action === "sub" &amp;&amp; nuevoStock > 0) {
+        nuevoStock -= 1;
+    }
+
+    product.stock_actual = nuevoStock;
+
+    // Actualizar visualmente de inmediato
+    renderTable();
+
+    // Persistir en database.json
+    try {
+        await fetch('/api/inventory/update', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: product.id, stock: nuevoStock })
+        });
+    } catch (error) {
+        console.error("Error al actualizar stock en el servidor:", error);
+    }
+});
+
+// Cargar los productos reales al iniciar la página
+fetchInventory();</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Events</h3><ul><li><a href="global.html#event:change">change</a></li><li><a href="global.html#event:click">click</a></li><li><a href="global.html#event:input">input</a></li><li><a href="global.html#event:keypress">keypress</a></li><li><a href="global.html#event:submit">submit</a></li></ul><h3>Global</h3><ul><li><a href="global.html#Puerto">Puerto</a></li><li><a href="global.html#Ruta">Ruta</a></li><li><a href="global.html#actualizarBotones">actualizarBotones</a></li><li><a href="global.html#calculateMetrics">calculateMetrics</a></li><li><a href="global.html#cargarBD">cargarBD</a></li><li><a href="global.html#cargarConfiguracionHorarios">cargarConfiguracionHorarios</a></li><li><a href="global.html#carrito">carrito</a></li><li><a href="global.html#catalogGrid">catalogGrid</a></li><li><a href="global.html#categoriaActiva">categoriaActiva</a></li><li><a href="global.html#clienteActual">clienteActual</a></li><li><a href="global.html#consultarCliente">consultarCliente</a></li><li><a href="global.html#empleadoEnTurno">empleadoEnTurno</a></li><li><a href="global.html#fetchInventory">fetchInventory</a></li><li><a href="global.html#getStatusBadge">getStatusBadge</a></li><li><a href="global.html#initReports">initReports</a></li><li><a href="global.html#inventarioBD">inventarioBD</a></li><li><a href="global.html#inventory">inventory</a></li><li><a href="global.html#limpiarFormulario">limpiarFormulario</a></li><li><a href="global.html#limpiarMensajes">limpiarMensajes</a></li><li><a href="global.html#loadReportData">loadReportData</a></li><li><a href="global.html#mostrarMensaje">mostrarMensaje</a></li><li><a href="global.html#obtenerEstadoBD">obtenerEstadoBD</a></li><li><a href="global.html#promoInfo">promoInfo</a></li><li><a href="global.html#readDB">readDB</a></li><li><a href="global.html#renderCatalogo">renderCatalogo</a></li><li><a href="global.html#renderTable">renderTable</a></li><li><a href="global.html#renderTicket">renderTicket</a></li><li><a href="global.html#renderizarTablaHistorial">renderizarTablaHistorial</a></li><li><a href="global.html#searchInput">searchInput</a></li><li><a href="global.html#setupTabs">setupTabs</a></li><li><a href="global.html#subtotalLabel">subtotalLabel</a></li><li><a href="global.html#ticketItems">ticketItems</a></li><li><a href="global.html#totalLabel">totalLabel</a></li><li><a href="global.html#updateReportTitle">updateReportTitle</a></li><li><a href="global.html#usuarioSesionActiva">usuarioSesionActiva</a></li><li><a href="global.html#usuariosBD">usuariosBD</a></li><li><a href="global.html#writeDB">writeDB</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Mon Oct 05 2026 19:29:34 GMT-0600 (hora estándar central)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

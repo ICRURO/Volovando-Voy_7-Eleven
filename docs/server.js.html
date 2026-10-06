@@ -1,4 +1,32 @@
-/**
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: server.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: server.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
  * @file server.js
  * @description Archivo principal del servidor Express para la aplicación Volovando Voy (7-Eleven).
  * Contiene la configuración del servidor, rutas para servir vistas estáticas y la API REST 
@@ -246,7 +274,7 @@ app.get('/api/inventory', (req, res) => {
 /**
  * Endpoint para descontar unidades del stock del inventario tras una venta.
  * @route POST /api/inventory/descontar
- * @param {Array<Object>} req.body.itemsVendidos - Lista de productos vendidos con su ID y cantidad.
+ * @param {Array&lt;Object>} req.body.itemsVendidos - Lista de productos vendidos con su ID y cantidad.
  * @returns {Object} JSON con mensaje de confirmación.
  */
 app.post('/api/inventory/descontar', (req, res) => {
@@ -339,7 +367,7 @@ app.get('/api/turnos/estado-actual', (req, res) => {
     const db = readDB();
     if (!db.turnos) db.turnos = [];
 
-    const turnoAbierto = db.turnos.find(t => t.id_empleado === usuarioSesionActiva.id_empleado && t.estatus === 'abierto');
+    const turnoAbierto = db.turnos.find(t => t.id_empleado === usuarioSesionActiva.id_empleado &amp;&amp; t.estatus === 'abierto');
     res.json({ usuario: usuarioSesionActiva, tieneTurnoAbierto: !!turnoAbierto });
 });
 
@@ -355,7 +383,7 @@ app.get('/api/turnos/estado/:id_empleado', (req, res) => {
     
     if (!db.turnos) db.turnos = [];
     
-    const turnoAbierto = db.turnos.find(t => t.id_empleado === id_empleado && t.estatus === 'abierto');
+    const turnoAbierto = db.turnos.find(t => t.id_empleado === id_empleado &amp;&amp; t.estatus === 'abierto');
     res.json({ tieneTurnoAbierto: !!turnoAbierto });
 });
 
@@ -372,7 +400,7 @@ app.post('/api/turnos/abrir', (req, res) => {
 
     if (!db.turnos) db.turnos = [];
 
-    const turnoExistente = db.turnos.find(t => t.id_empleado === id_empleado && t.estatus === 'abierto');
+    const turnoExistente = db.turnos.find(t => t.id_empleado === id_empleado &amp;&amp; t.estatus === 'abierto');
 
     if (turnoExistente) {
         return res.status(400).json({ 
@@ -416,7 +444,7 @@ app.post('/api/turnos/cerrar', (req, res) => {
 
     if (!db.turnos) db.turnos = [];
 
-    const turnoIndex = db.turnos.findIndex(t => t.id_empleado === id_empleado && t.estatus === 'abierto');
+    const turnoIndex = db.turnos.findIndex(t => t.id_empleado === id_empleado &amp;&amp; t.estatus === 'abierto');
     if (turnoIndex === -1) {
         return res.status(404).json({ error: "No se encontró un turno abierto para este empleado." });
     }
@@ -427,10 +455,10 @@ app.post('/api/turnos/cerrar', (req, res) => {
     let totalVentasEfectivo = 0;
     if (db.ventas) {
         db.ventas.forEach(v => {
-            if (v.id_empleado === id_empleado && 
-                v.metodo_pago === 'efectivo' &&
-                new Date(v.fecha) >= new Date(turno.fecha_inicio) &&
-                new Date(v.fecha) <= new Date(fechaFin)) {
+            if (v.id_empleado === id_empleado &amp;&amp; 
+                v.metodo_pago === 'efectivo' &amp;&amp;
+                new Date(v.fecha) >= new Date(turno.fecha_inicio) &amp;&amp;
+                new Date(v.fecha) &lt;= new Date(fechaFin)) {
                 totalVentasEfectivo += parseFloat(v.total) || 0;
             }
         });
@@ -719,7 +747,7 @@ app.get('/api/cashback/cliente/:id', (req, res) => {
     const proximosACaducar = movimientos.filter(m => {
         if (m.tipo !== 'acreditacion' || m.estatus !== 'vigente' || !m.fecha_caducidad) return false;
         const cad = new Date(m.fecha_caducidad);
-        return cad > hoy && cad <= avisoLimite;
+        return cad > hoy &amp;&amp; cad &lt;= avisoLimite;
     });
 
     const saldoPorCaducar = proximosACaducar.reduce((acc, curr) => acc + (parseFloat(curr.monto) || 0), 0);
@@ -817,4 +845,26 @@ app.post('/api/ventas/registrar-con-cashback', (req, res) => {
 app.listen(PORT, () => {
     console.log(`>>> Servidor activo en: http://127.0.0.1:${PORT}`);
     console.log(`>>> Iniciar sesión (login): http://127.0.0.1:${PORT}/login`);
-});
+});</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Events</h3><ul><li><a href="global.html#event:change">change</a></li><li><a href="global.html#event:click">click</a></li><li><a href="global.html#event:input">input</a></li><li><a href="global.html#event:keypress">keypress</a></li><li><a href="global.html#event:submit">submit</a></li></ul><h3>Global</h3><ul><li><a href="global.html#Puerto">Puerto</a></li><li><a href="global.html#Ruta">Ruta</a></li><li><a href="global.html#actualizarBotones">actualizarBotones</a></li><li><a href="global.html#calculateMetrics">calculateMetrics</a></li><li><a href="global.html#cargarBD">cargarBD</a></li><li><a href="global.html#cargarConfiguracionHorarios">cargarConfiguracionHorarios</a></li><li><a href="global.html#carrito">carrito</a></li><li><a href="global.html#catalogGrid">catalogGrid</a></li><li><a href="global.html#categoriaActiva">categoriaActiva</a></li><li><a href="global.html#clienteActual">clienteActual</a></li><li><a href="global.html#consultarCliente">consultarCliente</a></li><li><a href="global.html#empleadoEnTurno">empleadoEnTurno</a></li><li><a href="global.html#fetchInventory">fetchInventory</a></li><li><a href="global.html#getStatusBadge">getStatusBadge</a></li><li><a href="global.html#initReports">initReports</a></li><li><a href="global.html#inventarioBD">inventarioBD</a></li><li><a href="global.html#inventory">inventory</a></li><li><a href="global.html#limpiarFormulario">limpiarFormulario</a></li><li><a href="global.html#limpiarMensajes">limpiarMensajes</a></li><li><a href="global.html#loadReportData">loadReportData</a></li><li><a href="global.html#mostrarMensaje">mostrarMensaje</a></li><li><a href="global.html#obtenerEstadoBD">obtenerEstadoBD</a></li><li><a href="global.html#promoInfo">promoInfo</a></li><li><a href="global.html#readDB">readDB</a></li><li><a href="global.html#renderCatalogo">renderCatalogo</a></li><li><a href="global.html#renderTable">renderTable</a></li><li><a href="global.html#renderTicket">renderTicket</a></li><li><a href="global.html#renderizarTablaHistorial">renderizarTablaHistorial</a></li><li><a href="global.html#searchInput">searchInput</a></li><li><a href="global.html#setupTabs">setupTabs</a></li><li><a href="global.html#subtotalLabel">subtotalLabel</a></li><li><a href="global.html#ticketItems">ticketItems</a></li><li><a href="global.html#totalLabel">totalLabel</a></li><li><a href="global.html#updateReportTitle">updateReportTitle</a></li><li><a href="global.html#usuarioSesionActiva">usuarioSesionActiva</a></li><li><a href="global.html#usuariosBD">usuariosBD</a></li><li><a href="global.html#writeDB">writeDB</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Mon Oct 05 2026 19:29:34 GMT-0600 (hora estándar central)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -1,4 +1,32 @@
-/**
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: src/modules/shifts/shifts_admin.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: src/modules/shifts/shifts_admin.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
  * @file shifts_admin.js
  * @description Lógica del lado del cliente para el panel administrativo de turnos.
  * Permite actualizar la configuración global de horarios y visualizar el historial de 
@@ -30,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
      * @function cargarConfiguracionHorarios
      * @description Petición GET a la API para obtener las horas de apertura, cierre 
      * y minutos de tolerancia actuales y pintarlos en los inputs correspondientes.
-     * @returns {Promise<void>}
+     * @returns {Promise&lt;void>}
      */
     async function cargarConfiguracionHorarios() {
         try {
@@ -115,7 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
     /**
      * @function renderizarTablaHistorial
      * @description Dibuja en el DOM las filas de la tabla de historial de cuadres de caja.
-     * @param {Array<Object>} lista - Arreglo de turnos recuperados desde el servidor.
+     * @param {Array&lt;Object>} lista - Arreglo de turnos recuperados desde el servidor.
      * @returns {void}
      */
     function renderizarTablaHistorial(lista) {
@@ -123,11 +151,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!Array.isArray(lista) || lista.length === 0) {
             tablaBody.innerHTML = `
-                <tr>
-                    <td colspan="9" style="text-align: center; padding: 1.5rem; color: #666;">
+                &lt;tr>
+                    &lt;td colspan="9" style="text-align: center; padding: 1.5rem; color: #666;">
                         No se encontraron registros de turnos.
-                    </td>
-                </tr>
+                    &lt;/td>
+                &lt;/tr>
             `;
             return;
         }
@@ -138,19 +166,19 @@ document.addEventListener('DOMContentLoaded', () => {
             const estatusClass = t.estatus === 'abierto' ? 'badge-abierto' : 'badge-cerrado';
 
             return `
-                <tr>
-                    <td><strong>${t.id_turno || '-'}</strong></td>
-                    <td>${t.nombre_empleado || t.id_empleado}</td>
-                    <td>${fechaEntrada}</td>
-                    <td>${fechaSalida}</td>
-                    <td>$${Number(t.fondo_caja_inicial || 0).toFixed(2)}</td>
-                    <td>$${Number(t.ventas_efectivo_sistema || 0).toFixed(2)}</td>
-                    <td>${t.efectivo_cierre_real !== null ? '$' + Number(t.efectivo_cierre_real).toFixed(2) : '-'}</td>
-                    <td style="color: ${(t.diferencia || 0) < 0 ? '#c62828' : '#2e7d32'}; font-weight: bold;">
+                &lt;tr>
+                    &lt;td>&lt;strong>${t.id_turno || '-'}&lt;/strong>&lt;/td>
+                    &lt;td>${t.nombre_empleado || t.id_empleado}&lt;/td>
+                    &lt;td>${fechaEntrada}&lt;/td>
+                    &lt;td>${fechaSalida}&lt;/td>
+                    &lt;td>$${Number(t.fondo_caja_inicial || 0).toFixed(2)}&lt;/td>
+                    &lt;td>$${Number(t.ventas_efectivo_sistema || 0).toFixed(2)}&lt;/td>
+                    &lt;td>${t.efectivo_cierre_real !== null ? '$' + Number(t.efectivo_cierre_real).toFixed(2) : '-'}&lt;/td>
+                    &lt;td style="color: ${(t.diferencia || 0) &lt; 0 ? '#c62828' : '#2e7d32'}; font-weight: bold;">
                         ${t.diferencia !== null ? '$' + Number(t.diferencia).toFixed(2) : '-'}
-                    </td>
-                    <td><span class="badge ${estatusClass}">${t.estatus}</span></td>
-                </tr>
+                    &lt;/td>
+                    &lt;td>&lt;span class="badge ${estatusClass}">${t.estatus}&lt;/span>&lt;/td>
+                &lt;/tr>
             `;
         }).join('');
     }
@@ -183,4 +211,26 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 3500);
         }, 100);
     }
-});
+});</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Events</h3><ul><li><a href="global.html#event:change">change</a></li><li><a href="global.html#event:click">click</a></li><li><a href="global.html#event:input">input</a></li><li><a href="global.html#event:keypress">keypress</a></li><li><a href="global.html#event:submit">submit</a></li></ul><h3>Global</h3><ul><li><a href="global.html#Puerto">Puerto</a></li><li><a href="global.html#Ruta">Ruta</a></li><li><a href="global.html#actualizarBotones">actualizarBotones</a></li><li><a href="global.html#calculateMetrics">calculateMetrics</a></li><li><a href="global.html#cargarBD">cargarBD</a></li><li><a href="global.html#cargarConfiguracionHorarios">cargarConfiguracionHorarios</a></li><li><a href="global.html#carrito">carrito</a></li><li><a href="global.html#catalogGrid">catalogGrid</a></li><li><a href="global.html#categoriaActiva">categoriaActiva</a></li><li><a href="global.html#clienteActual">clienteActual</a></li><li><a href="global.html#consultarCliente">consultarCliente</a></li><li><a href="global.html#empleadoEnTurno">empleadoEnTurno</a></li><li><a href="global.html#fetchInventory">fetchInventory</a></li><li><a href="global.html#getStatusBadge">getStatusBadge</a></li><li><a href="global.html#initReports">initReports</a></li><li><a href="global.html#inventarioBD">inventarioBD</a></li><li><a href="global.html#inventory">inventory</a></li><li><a href="global.html#limpiarFormulario">limpiarFormulario</a></li><li><a href="global.html#limpiarMensajes">limpiarMensajes</a></li><li><a href="global.html#loadReportData">loadReportData</a></li><li><a href="global.html#mostrarMensaje">mostrarMensaje</a></li><li><a href="global.html#obtenerEstadoBD">obtenerEstadoBD</a></li><li><a href="global.html#promoInfo">promoInfo</a></li><li><a href="global.html#readDB">readDB</a></li><li><a href="global.html#renderCatalogo">renderCatalogo</a></li><li><a href="global.html#renderTable">renderTable</a></li><li><a href="global.html#renderTicket">renderTicket</a></li><li><a href="global.html#renderizarTablaHistorial">renderizarTablaHistorial</a></li><li><a href="global.html#searchInput">searchInput</a></li><li><a href="global.html#setupTabs">setupTabs</a></li><li><a href="global.html#subtotalLabel">subtotalLabel</a></li><li><a href="global.html#ticketItems">ticketItems</a></li><li><a href="global.html#totalLabel">totalLabel</a></li><li><a href="global.html#updateReportTitle">updateReportTitle</a></li><li><a href="global.html#usuarioSesionActiva">usuarioSesionActiva</a></li><li><a href="global.html#usuariosBD">usuariosBD</a></li><li><a href="global.html#writeDB">writeDB</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Mon Oct 05 2026 19:29:34 GMT-0600 (hora estándar central)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

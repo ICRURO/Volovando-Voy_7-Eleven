@@ -1,4 +1,11 @@
+/**
+ * @file sign_in.js
+ * @description Lógica del lado del cliente para el registro de nuevos usuarios/clientes.
+ * Controla la validación del formulario de registro y la comunicación con la API.
+ */
+
 document.addEventListener("DOMContentLoaded", () => {
+    // Referencias a los elementos del DOM
     const form = document.getElementById("registroForm");
     const nombre = document.getElementById("nombre");
     const email = document.getElementById("email");
@@ -8,6 +15,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const mensajeError = document.getElementById("mensajeError");
     const mensajeExito = document.getElementById("mensajeExito");
 
+    /**
+     * @function limpiarMensajes
+     * @description Oculta y limpia los mensajes de éxito y error en la interfaz.
+     * @returns {void}
+     */
     const limpiarMensajes = () => {
         mensajeError.textContent = "";
         mensajeError.style.display = "none";
@@ -15,6 +27,11 @@ document.addEventListener("DOMContentLoaded", () => {
         mensajeExito.style.display = "none";
     };
 
+    /**
+     * @event submit
+     * @description Maneja el evento de envío del formulario de registro.
+     * Valida las contraseñas y realiza la petición POST para registrar al usuario.
+     */
     form.addEventListener("submit", async (e) => {
         e.preventDefault();
         limpiarMensajes();
@@ -33,10 +50,15 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
+        // Deshabilitar botón durante la carga
         btnRegistrar.disabled = true;
         btnRegistrar.textContent = "REGISTRANDO...";
 
         try {
+            /**
+             * Petición a la API para registrar el nuevo usuario.
+             * @type {Response}
+             */
             const respuesta = await fetch('/api/auth/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -54,6 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 mensajeExito.style.display = "block";
                 form.reset();
 
+                // Redirigir al login después de 1.5 segundos
                 setTimeout(() => {
                     window.location.href = "log_in.html";
                 }, 1500);
@@ -66,6 +89,7 @@ document.addEventListener("DOMContentLoaded", () => {
             mensajeError.textContent = "No se pudo conectar con el servidor.";
             mensajeError.style.display = "block";
         } finally {
+            // Restaurar estado del botón
             btnRegistrar.disabled = false;
             btnRegistrar.textContent = "REGISTRARME Y COMENZAR";
         }
