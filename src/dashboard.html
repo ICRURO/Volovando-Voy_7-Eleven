@@ -61,8 +61,7 @@
         // Ocultar botones de admin si es empleado, pero mantener a ambos en el "HOME"
         if (usuario.rol === 'empleado') {
           document.querySelectorAll('.only-admin').forEach(btn => btn.style.display = 'none');
-          // Si necesitas que el empleado tenga un dashboard diferente, puedes cambiar el src aquí.
-          // De lo contrario, se quedará en welcome.html
+          if (frame) frame.src = 'modules/shifts/shifts_employee.html';
         } else {
           document.querySelectorAll('.only-admin').forEach(btn => btn.style.display = 'block');
         }
