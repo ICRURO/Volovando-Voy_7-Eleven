@@ -133,7 +133,7 @@ if (searchInput) {
 /**
  * @event click
  * @description Delegación de eventos en el cuerpo de la tabla para manejar los botones de sumar (+1) o restar (-1) stock.
- * Actualiza la interfaz de inmediato y envía una petición POST al servidor para persistir el cambio.
+ * Actualiza la interfaz de inmediato, persiste el cambio de stock y registra la merma si se resta stock (-1).
  */
 tbody.addEventListener("click", async (e) => {
     const btn = e.target.closest("button");
@@ -145,12 +145,15 @@ tbody.addEventListener("click", async (e) => {
 
     if (!product) return;
 
-    let nuevoStock = product.stock_actual !== undefined ? product.stock_actual : product.stock;
+    let stockPrevio = product.stock_actual !== undefined ? product.stock_actual : product.stock;
+    let nuevoStock = stockPrevio;
 
     if (action === "add") {
         nuevoStock += 1;
-    } else if (action === "sub" && nuevoStock > 0) {
+    } else if (action === "sub" && stockPrevio > 0) {
         nuevoStock -= 1;
+    } else {
+        return; // Si el stock ya es 0 y se presiona -1, no hace nada
     }
 
     product.stock_actual = nuevoStock;
@@ -158,7 +161,7 @@ tbody.addEventListener("click", async (e) => {
     // Actualizar visualmente de inmediato
     renderTable();
 
-    // Persistir en database.json
+    // 1. Persistir el nuevo stock en el backend
     try {
         await fetch('/api/inventory/update', {
             method: 'POST',
@@ -167,6 +170,26 @@ tbody.addEventListener("click", async (e) => {
         });
     } catch (error) {
         console.error("Error al actualizar stock en el servidor:", error);
+    }
+
+    // 2. Si la acción fue restar (-1), registrar la merma en la base de datos
+    if (action === "sub" && stockPrevio > 0) {
+        try {
+            const precioRef = product.precio_venta !== undefined ? product.precio_venta : (product.precio || 0);
+            await fetch('/api/losses', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    productId: product.id,
+                    productName: product.nombre,
+                    quantity: 1,
+                    cost: parseFloat(precioRef) || 0,
+                    reason: 'Ajuste manual de inventario (-1)'
+                })
+            });
+        } catch (error) {
+            console.error("Error al registrar merma:", error);
+        }
     }
 });
 

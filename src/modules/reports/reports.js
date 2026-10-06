@@ -30,10 +30,6 @@ function initReports() {
 function setupTabs() {
     const tabs = document.querySelectorAll('.tab-btn');
     tabs.forEach(tab => {
-        /**
-         * @event click
-         * @description Dispara la actualización visual de la tabla y título según la pestaña clickeada.
-         */
         tab.addEventListener('click', (e) => {
             tabs.forEach(t => t.classList.remove('active'));
             e.target.classList.add('active');
@@ -49,7 +45,7 @@ function setupTabs() {
  * @function updateReportTitle
  * @description Actualiza el elemento del DOM que muestra el título del reporte actual
  * basándose en el tipo de reporte seleccionado.
- * @param {string} type - El identificador del tipo de reporte (ej. 'sales-period', 'top-products').
+ * @param {string} type - El identificador del tipo de reporte.
  * @returns {void}
  */
 function updateReportTitle(type) {
@@ -68,25 +64,20 @@ function updateReportTitle(type) {
 /**
  * @async
  * @function loadReportData
- * @description Limpia la tabla actual, genera dinámicamente los encabezados (`<th>`) 
- * según el tipo de reporte y realiza una petición HTTP para obtener los registros desde el backend.
- * Luego inyecta las filas (`<tr>`) en el cuerpo de la tabla (`<tbody>`).
- * 
- * @param {string} type - El identificador del tipo de reporte que dicta la estructura de la tabla y el endpoint a consultar.
+ * @description Limpia la tabla actual, genera dinámicamente los encabezados y consume la API.
+ * @param {string} type - El identificador del tipo de reporte.
  * @returns {Promise<void>}
  */
 async function loadReportData(type) {
     const thead = document.querySelector('#reportTable thead');
     const tbody = document.querySelector('#reportTable tbody');
     
-    // Limpiar tabla antes de cargar nuevos datos
     thead.innerHTML = '';
     tbody.innerHTML = '';
 
     let headers = [];
     let rowsData = [];
 
-    // Definir encabezados basados en el tipo de reporte
     switch(type) {
         case 'sales-period':
             headers = ['ID Venta', 'Fecha', 'Total'];
@@ -98,10 +89,11 @@ async function loadReportData(type) {
             headers = ['Producto', 'Unidades Vendidas', 'Ingresos Generados'];
             break;
         case 'inventory-shrinks':
-            headers = ['ID Producto', 'Descripción', 'Cantidad Baja', 'Motivo', 'Fecha'];
+            headers = ['ID Producto', 'Producto / Volován', 'Total Mermas (-1)', 'Costo Ref.', 'Última Fecha'];
             break;
         case 'cashback':
-            headers = ['Cliente', 'Cashback Otorgado', 'Cashback Redimido', 'Balance Actual'];
+            // Encabezados exactos que tienes en tu vista actual
+            headers = ['ID', 'FECHA', 'VENTA / CLIENTE', 'MONTO', 'MOTIVO / BALANCE'];
             break;
         case 'attendance':
             headers = ['Empleado', 'Fecha', 'Hora Entrada', 'Hora Salida', 'Estado'];
@@ -113,7 +105,7 @@ async function loadReportData(type) {
             headers = ['Información'];
     }
 
-    // Crear la fila de encabezados en el DOM
+    // Dibujar encabezados
     let trHead = document.createElement('tr');
     headers.forEach(h => {
         let th = document.createElement('th');
@@ -122,24 +114,96 @@ async function loadReportData(type) {
     });
     thead.appendChild(trHead);
 
-    // Consultar los datos de la base de datos a través de la API
     try {
-        const response = await fetch(`/api/reports/${type}`);
-        if (response.ok) {
-            const data = await response.json();
-            rowsData = data.rows || [];
+        if (type === 'inventory-shrinks') {
+            const response = await fetch('/api/losses');
+            if (response.ok) {
+                const losses = await response.json();
+                const agrupado = {};
+                losses.forEach(item => {
+                    const key = item.productId || item.productName;
+                    if (!agrupado[key]) {
+                        agrupado[key] = {
+                            id: item.productId || 'N/A',
+                            name: item.productName || 'Volován',
+                            totalQty: 0,
+                            cost: Number(item.cost) || 0,
+                            lastDate: item.date || item.fecha
+                        };
+                    }
+                    agrupado[key].totalQty += (Number(item.quantity) || 1);
+                    agrupado[key].lastDate = item.date || item.fecha || agrupado[key].lastDate;
+                });
+
+                rowsData = Object.values(agrupado).map(p => [
+                    `#${p.id}`,
+                    p.name,
+                    p.totalQty.toString(),
+                    `$${p.cost.toFixed(2)}`,
+                    p.lastDate ? new Date(p.lastDate).toLocaleString() : 'N/D'
+                ]);
+            }
+        } else if (type === 'cashback') {
+            // Obtenemos los movimientos de cashback
+            const response = await fetch('/api/cashback');
+            if (response.ok) {
+                const movimientos = await response.json();
+                
+                rowsData = movimientos.map(c => {
+                    // Soporte para id_movimiento o id
+                    const idMov = c.id_movimiento || c.id || 'N/D';
+                    
+                    // Soporte para fecha o date
+                    const rawDate = c.fecha || c.date;
+                    const fechaFormateada = rawDate ? new Date(rawDate).toLocaleString() : 'N/D';
+                    
+                    // Identificación de venta y cliente
+                    const venta = c.id_venta || c.ticket || 'Venta N/D';
+                    const cliente = c.id_cliente || c.cliente || '';
+                    const ventaCliente = cliente ? `${venta} (${cliente})` : venta;
+
+                    // Validar si fue acreditación (+5%) o redención (usado en compra)
+                    const esRedencion = c.tipo === 'redencion' || (c.tipo_movimiento && c.tipo_movimiento.toLowerCase().includes('redención'));
+                    const montoNum = Math.abs(parseFloat(c.monto) || 0).toFixed(2);
+                    
+                    const montoTexto = esRedencion ? `-$${montoNum}` : `+$${montoNum}`;
+                    const motivoTexto = esRedencion ? 'Usado en compra' : 'Acumulado 5% compra';
+
+                    return [
+                        `#${idMov}`,
+                        fechaFormateada,
+                        ventaCliente,
+                        montoTexto,
+                        c.motivo || motivoTexto
+                    ];
+                });
+            }
+        } else {
+            const response = await fetch(`/api/reports/${type}`);
+            if (response.ok) {
+                const data = await response.json();
+                rowsData = data.rows || [];
+            }
         }
     } catch (error) {
         console.error("Error al conectar con la base de datos de reportes:", error);
     }
 
-    // Llenar el cuerpo de la tabla con los datos obtenidos o mostrar mensaje de tabla vacía
+    // Renderizar filas
     if (rowsData.length > 0) {
         rowsData.forEach(rowItem => {
             let tr = document.createElement('tr');
-            rowItem.forEach(cellText => {
+            rowItem.forEach((cellText, idx) => {
                 let td = document.createElement('td');
                 td.textContent = cellText;
+                
+                // Color verde si sumó (+) o rojo si usó cashback (-)
+                if (type === 'cashback' && idx === 3) {
+                    if (cellText.startsWith('+')) td.style.color = '#2e7d32';
+                    if (cellText.startsWith('-')) td.style.color = '#c62828';
+                    td.style.fontWeight = 'bold';
+                }
+
                 tr.appendChild(td);
             });
             tbody.appendChild(tr);

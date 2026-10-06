@@ -240,7 +240,7 @@ app.get('/api/auth/session', (req, res) => {
  */
 app.get('/api/inventory', (req, res) => {
     const db = readDB();
-    res.json(db.inventory || db.inventario);
+    res.json(db.inventory || db.inventario || []);
 });
 
 /**
@@ -277,9 +277,10 @@ app.post('/api/inventory/update', (req, res) => {
     const { id, stock } = req.body;
     const db = readDB();
 
-    if (!db.inventario) db.inventario = [];
+    if (!db.inventario && !db.inventory) db.inventario = [];
+    const listaInv = db.inventario || db.inventory;
 
-    const producto = db.inventario.find(p => String(p.id) === String(id));
+    const producto = listaInv.find(p => String(p.id) === String(id));
     if (!producto) {
         return res.status(404).json({ message: "Producto no encontrado" });
     }
@@ -287,7 +288,51 @@ app.post('/api/inventory/update', (req, res) => {
     producto.stock_actual = Math.max(0, parseInt(stock) || 0);
     writeDB(db);
 
-    res.json({ success: true, inventario: db.inventario });
+    res.json({ success: true, inventario: listaInv });
+});
+
+/** ==========================================
+ *  MERMAS Y BAJAS DE INVENTARIO
+ *  ========================================== */
+
+/**
+ * Endpoint para consultar el listado de mermas registradas.
+ * @route GET /api/losses
+ * @returns {Array} Array con las mermas registradas.
+ */
+app.get('/api/losses', (req, res) => {
+    const db = readDB();
+    res.json(db.mermas || db.losses || []);
+});
+
+/**
+ * Endpoint para registrar una nueva merma originada por ajuste (-1).
+ * @route POST /api/losses
+ * @param {string} req.body.productId - ID del producto mermado.
+ * @param {string} req.body.productName - Nombre del producto/volován.
+ * @param {number} req.body.quantity - Cantidad de piezas mermadas.
+ * @param {number} req.body.cost - Costo unitario o de referencia.
+ * @param {string} req.body.reason - Motivo del ajuste.
+ * @returns {Object} JSON con la nueva merma registrada.
+ */
+app.post('/api/losses', (req, res) => {
+    const db = readDB();
+    if (!db.mermas) db.mermas = [];
+
+    const nuevaMerma = {
+        id: `MER-${Date.now()}`,
+        productId: req.body.productId || 'N/D',
+        productName: req.body.productName || 'Volován',
+        quantity: Number(req.body.quantity) || 1,
+        cost: parseFloat(req.body.cost) || 0,
+        reason: req.body.reason || 'Ajuste manual de inventario (-1)',
+        date: new Date().toISOString()
+    };
+
+    db.mermas.push(nuevaMerma);
+    writeDB(db);
+
+    res.status(201).json({ success: true, merma: nuevaMerma });
 });
 
 /** ==========================================
@@ -529,7 +574,6 @@ app.get('/api/reports/:type', (req, res) => {
 
     const ventas = db.ventas || [];
     const usuarios = db.usuarios || [];
-    const inventario = db.inventory || db.inventario || [];
     const turnos = db.turnos || [];
 
     switch (type) {
@@ -594,26 +638,67 @@ app.get('/api/reports/:type', (req, res) => {
 
         case 'inventory-shrinks':
             {
-                const mermas = db.mermas || [];
-                rows = mermas.map(m => [
-                    m.id || 'N/D',
-                    m.nombre || m.descripcion || 'Sin nombre',
-                    String(m.cantidad_baja || m.cantidad || '1'),
-                    m.motivo || 'Merma / Caducidad',
-                    m.fecha ? new Date(m.fecha).toLocaleDateString() : 'N/D'
+                const mermas = db.mermas || db.losses || [];
+                const resumenMermas = {};
+
+                mermas.forEach(m => {
+                    const prodKey = m.productId || m.productName || m.nombre || 'N/D';
+                    const prodName = m.productName || m.nombre || m.descripcion || 'Volován';
+                    const cantidad = parseInt(m.quantity || m.cantidad_baja || m.cantidad) || 1;
+                    const costo = parseFloat(m.cost || m.precio || 0);
+
+                    if (!resumenMermas[prodKey]) {
+                        resumenMermas[prodKey] = {
+                            id: prodKey,
+                            nombre: prodName,
+                            totalCantidad: 0,
+                            costoRef: costo,
+                            ultimaFecha: m.date || m.fecha || new Date().toISOString()
+                        };
+                    }
+                    resumenMermas[prodKey].totalCantidad += cantidad;
+                    resumenMermas[prodKey].ultimaFecha = m.date || m.fecha || resumenMermas[prodKey].ultimaFecha;
+                });
+
+                rows = Object.values(resumenMermas).map(item => [
+                    `#${item.id}`,
+                    item.nombre,
+                    item.totalCantidad.toString(),
+                    `$${item.costRef.toFixed(2)}`,
+                    item.ultimaFecha ? new Date(item.ultimaFecha).toLocaleDateString() : 'N/D'
                 ]);
             }
             break;
 
         case 'cashback':
             {
-                const clientes = db.clientes || [];
-                rows = clientes.map(c => [
-                    c.nombre || c.id || 'Cliente',
-                    `$${(parseFloat(c.cashback_otorgado || c.cashback || 0)).toFixed(2)}`,
-                    `$${(parseFloat(c.cashback_redimido || 0)).toFixed(2)}`,
-                    `$${(parseFloat(c.cashback_actual || c.cashback || 0)).toFixed(2)}`
-                ]);
+                // Mapeo adaptado exactamente a las columnas de la vista: ID, FECHA, VENTA / CLIENTE, MONTO, MOTIVO / BALANCE
+                const movimientos = db.movimientos_cashback || [];
+                const listaUsuarios = db.usuarios || [];
+
+                rows = movimientos.map(c => {
+                    const idMov = c.id_movimiento || c.id || 'N/D';
+                    const rawDate = c.fecha || c.date;
+                    const fechaFormateada = rawDate ? new Date(rawDate).toLocaleString() : 'N/D';
+
+                    const clienteObj = listaUsuarios.find(u => u.id === c.id_cliente);
+                    const nombreCliente = clienteObj ? clienteObj.nombre : (c.id_cliente || '');
+                    const ticketVenta = c.id_venta || c.ticket || 'Ticket N/D';
+                    const ventaCliente = nombreCliente ? `${ticketVenta} (${nombreCliente})` : ticketVenta;
+
+                    const esRedencion = c.tipo === 'redencion' || (c.tipo_movimiento && c.tipo_movimiento.toLowerCase().includes('redención'));
+                    const montoNum = Math.abs(parseFloat(c.monto) || 0).toFixed(2);
+                    const montoTexto = esRedencion ? `-$${montoNum}` : `+$${montoNum}`;
+                    const motivoTexto = esRedencion ? 'Usado en compra' : 'Acumulado 5% compra';
+
+                    return [
+                        `#${idMov}`,
+                        fechaFormateada,
+                        ventaCliente,
+                        montoTexto,
+                        c.motivo || motivoTexto
+                    ];
+                });
             }
             break;
 
@@ -663,6 +748,16 @@ app.get('/api/reports/:type', (req, res) => {
  *  ========================================== */
 
 /**
+ * Endpoint para consultar la lista de movimientos de cashback.
+ * @route GET /api/cashback
+ * @returns {Array} Array con el historial de cashback.
+ */
+app.get('/api/cashback', (req, res) => {
+    const db = readDB();
+    res.json(db.movimientos_cashback || []);
+});
+
+/**
  * Endpoint para consultar la configuración global del sistema de Cashback.
  * @route GET /api/cashback/config
  * @returns {Object} JSON con porcentaje, días de vigencia y aviso de caducidad.
@@ -704,7 +799,7 @@ app.get('/api/cashback/cliente/:id', (req, res) => {
     const { id } = req.params;
     const db = readDB();
 
-    const cliente = (db.usuarios || []).find(u => u.id === id || u.correo.toLowerCase() === id.toLowerCase());
+    const cliente = (db.usuarios || []).find(u => u.id === id || (u.correo && u.correo.toLowerCase() === id.toLowerCase()));
     if (!cliente) {
         return res.status(404).json({ message: "Cliente no encontrado" });
     }
@@ -766,6 +861,7 @@ app.post('/api/ventas/registrar-con-cashback', (req, res) => {
                 id_venta: venta.id_venta,
                 tipo: 'redencion',
                 monto: cashbackRedimido,
+                motivo: 'Usado en compra',
                 fecha: new Date().toISOString(),
                 estatus: 'aplicado'
             });
@@ -786,6 +882,7 @@ app.post('/api/ventas/registrar-con-cashback', (req, res) => {
                 id_venta: venta.id_venta,
                 tipo: 'acreditacion',
                 monto: cashbackGenerado,
+                motivo: 'Acumulado 5% compra',
                 fecha: new Date().toISOString(),
                 fecha_caducidad: fechaCaducidad.toISOString(),
                 estatus: 'vigente'

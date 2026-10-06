@@ -60,7 +60,7 @@
       "correo": "Sara@correo.com",
       "password": "password",
       "rol": "cliente",
-      "saldo_cashback": 0,
+      "saldo_cashback": 8.25,
       "estatus": "activo"
     },
     {
@@ -79,7 +79,7 @@
       "nombre": "Volován de Jamón y Queso",
       "categoria": "Clásicos",
       "precio_venta": 25,
-      "stock_actual": 30,
+      "stock_actual": 17,
       "umbral_minimo": 10,
       "imagen": "../../../assets/volovan.png",
       "lotes": [
@@ -97,7 +97,7 @@
       "nombre": "Volován de Pollo",
       "categoria": "Clásicos",
       "precio_venta": 25,
-      "stock_actual": 8,
+      "stock_actual": 5,
       "umbral_minimo": 10,
       "imagen": "../../../assets/volovan.png",
       "lotes": [
@@ -115,7 +115,7 @@
       "nombre": "Volován de Atún",
       "categoria": "Clásicos",
       "precio_venta": 28,
-      "stock_actual": 14,
+      "stock_actual": 12,
       "umbral_minimo": 8,
       "imagen": "../../../assets/volovan.png",
       "lotes": [
@@ -133,7 +133,7 @@
       "nombre": "Pepsi de Lata 500ml",
       "categoria": "Bebidas",
       "precio_venta": 18,
-      "stock_actual": 22,
+      "stock_actual": 20,
       "umbral_minimo": 15,
       "imagen": "../../../assets/Pepsi.png",
       "lotes": [
@@ -151,7 +151,7 @@
       "nombre": "Mirinda 600ml",
       "categoria": "Bebidas",
       "precio_venta": 18,
-      "stock_actual": 16,
+      "stock_actual": 13,
       "umbral_minimo": 15,
       "imagen": "../../../assets/Mirinda.png",
       "lotes": [
@@ -364,6 +364,190 @@
       ],
       "cashback_generado": 0,
       "cashback_redimido": 0
+    },
+    {
+      "id_venta": "V-1791254430628",
+      "fecha": "2026-10-06T02:40:30.628Z",
+      "id_empleado": "EMP-001",
+      "id_cliente": "CLI-1001",
+      "metodo_pago": "efectivo",
+      "cashback_usado": 0,
+      "tipo_venta": "Mostrador",
+      "total": 25,
+      "items": [
+        {
+          "id": "VOL-JQ",
+          "nombre": "Volován de Jamón y Queso",
+          "categoria": "Clásicos",
+          "precio_venta": 25,
+          "stock_actual": 25,
+          "umbral_minimo": 10,
+          "imagen": "../../../assets/volovan.png",
+          "lotes": [
+            {
+              "id_lote": "L-1001",
+              "cantidad": 35,
+              "fecha_ingreso": "2026-09-17T08:00:00Z",
+              "fecha_caducidad": "2026-09-20T23:59:59Z",
+              "proveedor": "Cocina Central"
+            }
+          ],
+          "cantidad": 1
+        }
+      ],
+      "cashback_generado": 1.25,
+      "cashback_redimido": 0
+    },
+    {
+      "id_venta": "V-1791254455425",
+      "fecha": "2026-10-06T02:40:55.425Z",
+      "id_empleado": "EMP-001",
+      "id_cliente": "CLI-1001",
+      "metodo_pago": "efectivo",
+      "cashback_usado": 0,
+      "tipo_venta": "Mostrador",
+      "total": 25,
+      "items": [
+        {
+          "id": "VOL-JQ",
+          "nombre": "Volován de Jamón y Queso",
+          "categoria": "Clásicos",
+          "precio_venta": 25,
+          "stock_actual": 24,
+          "umbral_minimo": 10,
+          "imagen": "../../../assets/volovan.png",
+          "lotes": [
+            {
+              "id_lote": "L-1001",
+              "cantidad": 35,
+              "fecha_ingreso": "2026-09-17T08:00:00Z",
+              "fecha_caducidad": "2026-09-20T23:59:59Z",
+              "proveedor": "Cocina Central"
+            }
+          ],
+          "cantidad": 1
+        }
+      ],
+      "cashback_generado": 1.25,
+      "cashback_redimido": 0
+    },
+    {
+      "id_venta": "V-1791254542296",
+      "fecha": "2026-10-06T02:42:22.296Z",
+      "id_empleado": "EMP-001",
+      "id_cliente": "CLI-GENERAL",
+      "metodo_pago": "efectivo",
+      "cashback_usado": 0,
+      "tipo_venta": "Mostrador",
+      "total": 50,
+      "items": [
+        {
+          "id": "VOL-JQ",
+          "nombre": "Volován de Jamón y Queso",
+          "categoria": "Clásicos",
+          "precio_venta": 25,
+          "stock_actual": 23,
+          "umbral_minimo": 10,
+          "imagen": "../../../assets/volovan.png",
+          "lotes": [
+            {
+              "id_lote": "L-1001",
+              "cantidad": 35,
+              "fecha_ingreso": "2026-09-17T08:00:00Z",
+              "fecha_caducidad": "2026-09-20T23:59:59Z",
+              "proveedor": "Cocina Central"
+            }
+          ],
+          "cantidad": 1
+        },
+        {
+          "id": "VOL-PO",
+          "nombre": "Volován de Pollo",
+          "categoria": "Clásicos",
+          "precio_venta": 25,
+          "stock_actual": 8,
+          "umbral_minimo": 10,
+          "imagen": "../../../assets/volovan.png",
+          "lotes": [
+            {
+              "id_lote": "L-1002",
+              "cantidad": 8,
+              "fecha_ingreso": "2026-09-16T08:00:00Z",
+              "fecha_caducidad": "2026-09-19T23:59:59Z",
+              "proveedor": "Cocina Central"
+            }
+          ],
+          "cantidad": 1
+        }
+      ],
+      "cashback_generado": 0,
+      "cashback_redimido": 0
+    },
+    {
+      "id_venta": "V-1791254573213",
+      "fecha": "2026-10-06T02:42:53.213Z",
+      "id_empleado": "EMP-001",
+      "id_cliente": "CLI-1001",
+      "metodo_pago": "efectivo",
+      "cashback_usado": 0,
+      "tipo_venta": "Mostrador",
+      "total": 90,
+      "items": [
+        {
+          "id": "VOL-JQ",
+          "nombre": "Volován de Jamón y Queso",
+          "categoria": "Clásicos",
+          "precio_venta": 25,
+          "stock_actual": 22,
+          "umbral_minimo": 10,
+          "imagen": "../../../assets/volovan.png",
+          "lotes": [
+            {
+              "id_lote": "L-1001",
+              "cantidad": 35,
+              "fecha_ingreso": "2026-09-17T08:00:00Z",
+              "fecha_caducidad": "2026-09-20T23:59:59Z",
+              "proveedor": "Cocina Central"
+            }
+          ],
+          "cantidad": 4
+        }
+      ],
+      "cashback_generado": 4.5,
+      "cashback_redimido": 0
+    },
+    {
+      "id_venta": "V-1791255925313",
+      "fecha": "2026-10-06T03:05:25.313Z",
+      "id_empleado": "EMP-001",
+      "id_cliente": "CLI-1001",
+      "metodo_pago": "efectivo",
+      "cashback_usado": 0,
+      "tipo_venta": "Mostrador",
+      "total": 25,
+      "items": [
+        {
+          "id": "VOL-JQ",
+          "nombre": "Volován de Jamón y Queso",
+          "categoria": "Clásicos",
+          "precio_venta": 25,
+          "stock_actual": 18,
+          "umbral_minimo": 10,
+          "imagen": "../../../assets/volovan.png",
+          "lotes": [
+            {
+              "id_lote": "L-1001",
+              "cantidad": 35,
+              "fecha_ingreso": "2026-09-17T08:00:00Z",
+              "fecha_caducidad": "2026-09-20T23:59:59Z",
+              "proveedor": "Cocina Central"
+            }
+          ],
+          "cantidad": 1
+        }
+      ],
+      "cashback_generado": 1.25,
+      "cashback_redimido": 0
     }
   ],
   "turnos": [
@@ -465,6 +649,174 @@
       "fecha": "2026-09-27T23:02:12.169Z",
       "fecha_caducidad": "2026-10-27T23:02:12.169Z",
       "estatus": "vigente"
+    },
+    {
+      "id_movimiento": "CB-ACR-1791254430632",
+      "id_cliente": "CLI-1001",
+      "id_venta": "V-1791254430628",
+      "tipo": "acreditacion",
+      "monto": 1.25,
+      "fecha": "2026-10-06T02:40:30.632Z",
+      "fecha_caducidad": "2026-11-05T02:40:30.632Z",
+      "estatus": "vigente"
+    },
+    {
+      "id_movimiento": "CB-ACR-1791254455427",
+      "id_cliente": "CLI-1001",
+      "id_venta": "V-1791254455425",
+      "tipo": "acreditacion",
+      "monto": 1.25,
+      "fecha": "2026-10-06T02:40:55.427Z",
+      "fecha_caducidad": "2026-11-05T02:40:55.427Z",
+      "estatus": "vigente"
+    },
+    {
+      "id_movimiento": "CB-ACR-1791254573216",
+      "id_cliente": "CLI-1001",
+      "id_venta": "V-1791254573213",
+      "tipo": "acreditacion",
+      "monto": 4.5,
+      "fecha": "2026-10-06T02:42:53.216Z",
+      "fecha_caducidad": "2026-11-05T02:42:53.216Z",
+      "estatus": "vigente"
+    },
+    {
+      "id_movimiento": "CB-ACR-1791255925317",
+      "id_cliente": "CLI-1001",
+      "id_venta": "V-1791255925313",
+      "tipo": "acreditacion",
+      "monto": 1.25,
+      "fecha": "2026-10-06T03:05:25.317Z",
+      "fecha_caducidad": "2026-11-05T03:05:25.317Z",
+      "estatus": "vigente"
+    }
+  ],
+  "mermas": [
+    {
+      "id": "MER-1791254156345",
+      "productId": "VOL-JQ",
+      "productName": "Volován de Jamón y Queso",
+      "quantity": 1,
+      "cost": 25,
+      "reason": "Ajuste manual de inventario (-1)",
+      "date": "2026-10-06T02:35:56.345Z"
+    },
+    {
+      "id": "MER-1791254156680",
+      "productId": "VOL-JQ",
+      "productName": "Volován de Jamón y Queso",
+      "quantity": 1,
+      "cost": 25,
+      "reason": "Ajuste manual de inventario (-1)",
+      "date": "2026-10-06T02:35:56.680Z"
+    },
+    {
+      "id": "MER-1791254156985",
+      "productId": "VOL-JQ",
+      "productName": "Volován de Jamón y Queso",
+      "quantity": 1,
+      "cost": 25,
+      "reason": "Ajuste manual de inventario (-1)",
+      "date": "2026-10-06T02:35:56.985Z"
+    },
+    {
+      "id": "MER-1791254157300",
+      "productId": "VOL-JQ",
+      "productName": "Volován de Jamón y Queso",
+      "quantity": 1,
+      "cost": 25,
+      "reason": "Ajuste manual de inventario (-1)",
+      "date": "2026-10-06T02:35:57.300Z"
+    },
+    {
+      "id": "MER-1791254157708",
+      "productId": "VOL-JQ",
+      "productName": "Volován de Jamón y Queso",
+      "quantity": 1,
+      "cost": 25,
+      "reason": "Ajuste manual de inventario (-1)",
+      "date": "2026-10-06T02:35:57.709Z"
+    },
+    {
+      "id": "MER-1791254737027",
+      "productId": "Refresco1",
+      "productName": "Pepsi de Lata 500ml",
+      "quantity": 1,
+      "cost": 18,
+      "reason": "Ajuste manual de inventario (-1)",
+      "date": "2026-10-06T02:45:37.027Z"
+    },
+    {
+      "id": "MER-1791254737196",
+      "productId": "Refresco1",
+      "productName": "Pepsi de Lata 500ml",
+      "quantity": 1,
+      "cost": 18,
+      "reason": "Ajuste manual de inventario (-1)",
+      "date": "2026-10-06T02:45:37.196Z"
+    },
+    {
+      "id": "MER-1791254738389",
+      "productId": "Refresco2",
+      "productName": "Mirinda 600ml",
+      "quantity": 1,
+      "cost": 18,
+      "reason": "Ajuste manual de inventario (-1)",
+      "date": "2026-10-06T02:45:38.389Z"
+    },
+    {
+      "id": "MER-1791254738574",
+      "productId": "Refresco2",
+      "productName": "Mirinda 600ml",
+      "quantity": 1,
+      "cost": 18,
+      "reason": "Ajuste manual de inventario (-1)",
+      "date": "2026-10-06T02:45:38.574Z"
+    },
+    {
+      "id": "MER-1791254738718",
+      "productId": "Refresco2",
+      "productName": "Mirinda 600ml",
+      "quantity": 1,
+      "cost": 18,
+      "reason": "Ajuste manual de inventario (-1)",
+      "date": "2026-10-06T02:45:38.718Z"
+    },
+    {
+      "id": "MER-1791254739927",
+      "productId": "VOL-AT",
+      "productName": "Volován de Atún",
+      "quantity": 1,
+      "cost": 28,
+      "reason": "Ajuste manual de inventario (-1)",
+      "date": "2026-10-06T02:45:39.927Z"
+    },
+    {
+      "id": "MER-1791254740201",
+      "productId": "VOL-AT",
+      "productName": "Volován de Atún",
+      "quantity": 1,
+      "cost": 28,
+      "reason": "Ajuste manual de inventario (-1)",
+      "date": "2026-10-06T02:45:40.201Z"
+    },
+    {
+      "id": "MER-1791254740757",
+      "productId": "VOL-PO",
+      "productName": "Volován de Pollo",
+      "quantity": 1,
+      "cost": 25,
+      "reason": "Ajuste manual de inventario (-1)",
+      "date": "2026-10-06T02:45:40.757Z"
+    },
+    {
+      "id": "MER-1791254740936",
+      "productId": "VOL-PO",
+      "productName": "Volován de Pollo",
+      "quantity": 1,
+      "cost": 25,
+      "reason": "Ajuste manual de inventario (-1)",
+      "date": "2026-10-06T02:45:40.936Z"
     }
   ]
 }

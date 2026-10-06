@@ -78,7 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 // Redirección al panel principal tras el login exitoso
                 setTimeout(() => {
-                    window.location.href = "../dashboard.html";
+                    window.location.href = '../../dashboard.html';
                 }, 1000);
 
             } catch (error) {
