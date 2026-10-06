@@ -28,7 +28,10 @@
     <nav class="sidebar-nav">
       <button id="btn-home" class="nav-btn active" onclick="loadModule('welcome.html', this)">HOME</button>
       
-      <button class="nav-btn only-admin" onclick="loadModule('modules/pos/pos.html', this)">MENÚ / VENTAS</button>
+      <button class="nav-btn" onclick="loadModule('modules/pos/pos.html', this)">MENÚ / VENTAS</button>
+
+      <button class="nav-btn only-empleado" onclick="loadModule('modules/shifts/shifts_employee.html', this)">MI CAJA</button>
+
       <button class="nav-btn only-admin" onclick="loadModule('modules/inventory/inventory.html', this)">INVENTARIO</button>
       <button class="nav-btn only-admin" onclick="alert('Módulo de pedidos en desarrollo')">PEDIDOS</button>
       <button class="nav-btn only-admin" onclick="loadModule('modules/clients/clients.html', this)">CLIENTES</button>
