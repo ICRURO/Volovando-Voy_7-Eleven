@@ -331,22 +331,25 @@ if (btnPay) {
 
         const totalVenta = parseFloat(totalLabel.textContent.replace('$', '')) || 0;
         const cbInput = document.getElementById("input-cashback");
-        const pagoCashback = cbInput ? (parseFloat(cbInput.value) || 0) : 0;
+        const pagoCashback = cbInput && !cbInput.disabled ? (parseFloat(cbInput.value) || 0) : 0;
 
         const efInput = document.getElementById("input-efectivo");
-        const pagoEfectivo = efInput ? (parseFloat(efInput.value) || 0) : 0;
+        const pagoEfectivo = efInput && !efInput.disabled ? (parseFloat(efInput.value) || 0) : 0;
         const tjInput = document.getElementById("input-tarjeta");
-        const pagoTarjeta = efInput ? (parseFloat(tjInput.value) || 0) : 0;
+        const pagoTarjeta = tjInput && !tjInput.disabled ? (parseFloat(tjInput.value) || 0) : 0;
         const tfInput = document.getElementById("input-transferencia");
-        const pagoTransferencia = efInput ? (parseFloat(tfInput.value) || 0) : 0;
+        const pagoTransferencia = tfInput && !tfInput.disabled ? (parseFloat(tfInput.value) || 0) : 0;
 
-        const sumaPagos = pagoCashback + pagoEfectivo + pagoTarjeta + pagoTransferencia;
+        const sumaPagos = Math.round((pagoCashback + pagoEfectivo + pagoTarjeta + pagoTransferencia) * 100) / 100;
+        const totalVentaRedondeado = Math.round(totalVenta * 100) / 100;
         const btnPendiente = document.getElementById("btn-pendiente");
 
-        if (sumaPagos != totalVenta && !btnPendiente.checked){
+        if (sumaPagos < totalVentaRedondeado && (!btnPendiente || !btnPendiente.checked)) {
             alert("El pago no acompleta al total de la venta, marque el botón '¿Pago pendiente?' de no poder llegarse al total al momento");
             return;
         }
+
+        const cambio = Math.max(0, sumaPagos - totalVentaRedondeado);
 
         // Validaciones HU-18 (Pagar con saldo de cashback)
         if (pagoCashback > 0) {
